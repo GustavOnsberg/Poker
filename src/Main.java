@@ -18,8 +18,7 @@ public class Main {
 
 
     public static void createWindow(boolean fullscreen) throws IOException {
-        window = new Window();
-        window.isFullscreen = fullscreen;
+        window = new Window(fullscreen);
         window.setMinimumSize(new Dimension(1000,600));
         window.setTitle("Poker");
         window.setResizable(true);
