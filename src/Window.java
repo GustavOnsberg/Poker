@@ -1,13 +1,16 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 public class Window extends JFrame implements ActionListener, Runnable, ChangeListener {
     boolean isFullscreen;
+
+    Image imgSettingsFullscreen = ImageIO.read(getClass().getResource("graphics/icons/icon_fullscreen.png"));
 
     int playBtnW = 120;
     int playBtnH = 40;
@@ -36,7 +39,10 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
     int settingsNum = 5;
 
-    public Window(){
+
+    TableComponent tableComponent = new TableComponent();
+
+    public Window() throws IOException {
         cp.setLayout(null);
         cp.add(gamePanel);
         cp.add(sidePanel);
@@ -56,6 +62,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         gamePanel.add(btnFold);
         gamePanel.add(betSlider);
         gamePanel.add(betSliderLabel);
+        gamePanel.add(tableComponent);
         gamePanel.setBackground(Color.GREEN);
 
         sidePanel.setLayout(null);
@@ -71,6 +78,11 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         btnSettingsFullscreen.setBounds(sidePanelW/settingsNum*3,0,sidePanelW/settingsNum,sidePanelW/settingsNum);
         btnSettingsLeave.setBounds(sidePanelW/settingsNum*4,0,sidePanelW/settingsNum,sidePanelW/settingsNum);
 
+        try{
+            btnSettingsFullscreen.setIcon(new ImageIcon(imgSettingsFullscreen));
+        }catch(Exception e){}
+
+
         settingsPanel.add(btnSettingsDeck);
         settingsPanel.add(btnSettingsMusic);
         settingsPanel.add(btnSettingsSound);
@@ -85,7 +97,6 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
 
 
-
         onSizeChange();
     }
 
@@ -95,7 +106,11 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(btnSettingsFullscreen)){
-            Main.createWindow(!isFullscreen);
+            try {
+                Main.createWindow(!isFullscreen);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             dispose();
         }
     }
@@ -108,9 +123,13 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
                 lastSize.setSize(cp.getSize());
                 System.out.println("Window has been resized");
             }
+            tableComponent.repaint();
+            betSliderLabel.setText(betSliderLabel.getText());
+            betSliderLabel.setBounds(betSliderLabel.getBounds());
+
 
             try {
-                Thread.sleep(250);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -128,15 +147,17 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         btnCall.setBounds(gamePanel.getWidth() / 2 - playBtnW / 2, gamePanel.getHeight() - playBtnH - playBtnSpace, playBtnW, playBtnH);
         btnFold.setBounds(gamePanel.getWidth() / 2 + playBtnW / 2 + playBtnSpace, gamePanel.getHeight() - playBtnH - playBtnSpace, playBtnW, playBtnH);
 
-        betSlider.setBounds(50,cp.getHeight() - 2 * playBtnSpace - playBtnH - 50, gamePanel.getWidth() - 100, 50);
+        betSlider.setBounds(50,cp.getHeight() - 2 * playBtnSpace - playBtnH - 40, gamePanel.getWidth() - 100, 50);
 
-        betSliderLabel.setBounds(betSlider.getX() + betSlider.getWidth() * betSlider.getValue() / betSlider.getMaximum(),betSlider.getY() - 120,200,200);
+        betSliderLabel.setBounds(betSlider.getX() + betSlider.getWidth() * betSlider.getValue() / betSlider.getMaximum(),betSlider.getY() - 10,200,15);
+
+        tableComponent.setBounds(0,0,gamePanel.getWidth(),betSliderLabel.getY());
     }
 
     @Override
     public void stateChanged(ChangeEvent changeEvent) {
         if (changeEvent.getSource().equals(betSlider)){
-            betSliderLabel.setBounds(betSlider.getX() + betSlider.getWidth() * betSlider.getValue() / betSlider.getMaximum(),betSlider.getY() - 120,200,200);
+            betSliderLabel.setBounds(betSlider.getX() + betSlider.getWidth() * betSlider.getValue() / betSlider.getMaximum(),betSlider.getY() - 10,200,15);
             if (betSlider.getValue() != betSlider.getMaximum())
                 betSliderLabel.setText("$ "+betSlider.getValue());
             else
