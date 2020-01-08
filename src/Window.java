@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Window extends JFrame implements ActionListener, Runnable, ChangeListener {
     boolean isFullscreen;
 
-    Image imgSettingsFullscreen = ImageIO.read(getClass().getResource("graphics/icons/icon_fullscreen.png"));
+    Image imgSettingsFullscreen = ImageIO.read(getClass().getResource("resources/graphics/icons/icon_fullscreen.png"));
 
     int playBtnW = 120;
     int playBtnH = 40;
