@@ -1,12 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class Main {
 
     public static Window window;
     public static Thread windowThread;
 
-    public static void main(String [] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+    public static void main(String [] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException {
         UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
 
@@ -16,7 +17,7 @@ public class Main {
 
 
 
-    public static void createWindow(boolean fullscreen){
+    public static void createWindow(boolean fullscreen) throws IOException {
         window = new Window();
         window.isFullscreen = fullscreen;
         window.setMinimumSize(new Dimension(1000,600));
