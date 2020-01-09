@@ -6,11 +6,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import javax.swing.ImageIcon;
+import javax.swing.Icon;
 
 public class Window extends JFrame implements ActionListener, Runnable, ChangeListener {
     boolean isFullscreen;
 
-    Image imgSettingsFullscreen = ImageIO.read(getClass().getResource("resources/graphics/icons/icon_fullscreen.png"));
 
     int playBtnW = 120;
     int playBtnH = 40;
@@ -31,10 +32,11 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
     JSlider betSlider = new JSlider(JSlider.HORIZONTAL,50000,2000);
     JLabel betSliderLabel = new JLabel("$ 10000");
 
+
     JButton btnSettingsDeck = new JButton("D");
-    JButton btnSettingsMusic = new JButton("M");
-    JButton btnSettingsSound = new JButton("S");
-    JButton btnSettingsFullscreen = new JButton("F");
+    JButton btnSettingsMusic = new JButton();
+    JButton btnSettingsSound = new JButton();
+    JButton btnSettingsFullscreen = new JButton();
     JButton btnSettingsLeave = new JButton("L");
 
     int settingsNum = 5;
@@ -42,7 +44,9 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
     TableComponent tableComponent = new TableComponent();
 
-    public Window() throws IOException {
+    public Window(boolean isFullscreen) throws IOException {
+        this.isFullscreen = isFullscreen;
+
         cp.setLayout(null);
         cp.add(gamePanel);
         cp.add(sidePanel);
@@ -64,13 +68,14 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         gamePanel.add(betSliderLabel);
         gamePanel.add(tableComponent);
         gamePanel.setBackground(Color.GREEN);
+        tableComponent.setBackground(null);
 
         sidePanel.setLayout(null);
         sidePanel.setBackground(Color.RED);
         settingsPanel.setVisible(true);
-        settingsPanel.setLayout(null);
         settingsPanel.setBounds(0,0,sidePanelW,sidePanelW/settingsNum);
         settingsPanel.setBackground(null);
+        settingsPanel.setLayout(null);
         sidePanel.add(settingsPanel);
         btnSettingsDeck.setBounds(0,0,sidePanelW/settingsNum,sidePanelW/settingsNum);
         btnSettingsMusic.setBounds(sidePanelW/settingsNum,0,sidePanelW/settingsNum,sidePanelW/settingsNum);
@@ -78,9 +83,23 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         btnSettingsFullscreen.setBounds(sidePanelW/settingsNum*3,0,sidePanelW/settingsNum,sidePanelW/settingsNum);
         btnSettingsLeave.setBounds(sidePanelW/settingsNum*4,0,sidePanelW/settingsNum,sidePanelW/settingsNum);
 
-        try{
-            btnSettingsFullscreen.setIcon(new ImageIcon(imgSettingsFullscreen));
-        }catch(Exception e){}
+
+        Image imgSettingsMusic = ImageIO.read(getClass().getResource("/resources/graphics/icons/icon_music.png")).getScaledInstance(40,40, Image.SCALE_SMOOTH);
+        Icon iconSettingsMusic = new ImageIcon(imgSettingsMusic);
+
+        Image imgSettingsSound = ImageIO.read(getClass().getResource("/resources/graphics/icons/icon_sound.png")).getScaledInstance(40,40, Image.SCALE_SMOOTH);
+        Icon iconSettingsSound = new ImageIcon(imgSettingsSound);
+
+        Image imgSettingsFullscreen;
+        if (isFullscreen)
+            imgSettingsFullscreen = ImageIO.read(getClass().getResource("/resources/graphics/icons/icon_fullscreen_exit.png")).getScaledInstance(40,40, Image.SCALE_SMOOTH);
+        else
+            imgSettingsFullscreen = ImageIO.read(getClass().getResource("/resources/graphics/icons/icon_fullscreen.png")).getScaledInstance(40,40, Image.SCALE_SMOOTH);
+        Icon iconSettingsFullscreen = new ImageIcon(imgSettingsFullscreen);
+
+        btnSettingsMusic.setIcon(iconSettingsMusic);
+        btnSettingsSound.setIcon(iconSettingsSound);
+        btnSettingsFullscreen.setIcon(iconSettingsFullscreen);
 
 
         settingsPanel.add(btnSettingsDeck);
@@ -94,7 +113,6 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         btnSettingsSound.addActionListener(this);
         btnSettingsFullscreen.addActionListener(this);
         btnSettingsLeave.addActionListener(this);
-
 
 
         onSizeChange();
@@ -158,10 +176,14 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
     public void stateChanged(ChangeEvent changeEvent) {
         if (changeEvent.getSource().equals(betSlider)){
             betSliderLabel.setBounds(betSlider.getX() + betSlider.getWidth() * betSlider.getValue() / betSlider.getMaximum(),betSlider.getY() - 10,200,15);
-            if (betSlider.getValue() != betSlider.getMaximum())
-                betSliderLabel.setText("$ "+betSlider.getValue());
+            betSliderLabel.setText("$ "+betSlider.getValue());
+            btnRaise.setEnabled(true);
+            if (betSlider.getValue() == 0)
+                btnRaise.setText("Can't raise 0");
+            else if(betSlider.getValue() != betSlider.getMaximum())
+                btnRaise.setText("Raise");
             else
-                betSliderLabel.setText("ALL IN");
+                btnRaise.setText("ALL IN");
         }
     }
 }
