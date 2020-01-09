@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.Icon;
 
 public class Window extends JFrame implements ActionListener, Runnable, ChangeListener {
+    Game thisGame;
     boolean isFullscreen;
 
 
@@ -44,7 +45,8 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
     TableComponent tableComponent = new TableComponent();
 
-    public Window(boolean isFullscreen) throws IOException {
+    public Window(boolean isFullscreen, Game thisGame) throws IOException {
+        this.thisGame = thisGame;
         this.isFullscreen = isFullscreen;
 
         cp.setLayout(null);
@@ -125,7 +127,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(btnSettingsFullscreen)){
             try {
-                Main.createWindow(!isFullscreen);
+                thisGame.createWindow(!isFullscreen, thisGame);
             } catch (IOException e) {
                 e.printStackTrace();
             }
