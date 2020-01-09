@@ -8,18 +8,10 @@ import java.util.Scanner;
 public class Game implements Runnable {
     public static Window window;
     public static Thread windowThread;
-    public static Socket socket;
-    public static Scanner input;
-    public static PrintWriter output;
+
 
     public Game() throws IOException {
-        socket = new Socket("82.211.202.61",33201);
-        input = new Scanner(socket.getInputStream());
-        output = new PrintWriter(socket.getOutputStream());
 
-
-        output.print("Hi server");
-        output.flush();
     }
 
     @Override

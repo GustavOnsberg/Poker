@@ -13,11 +13,15 @@ public class ConnectionHandler implements Runnable{
     public Scanner input;
     public PrintWriter output;
 
+    long lastReciveTime = 0;
+
     ConnectionHandler(Socket newSocket){
         socket = newSocket;
+        lastReciveTime = System.currentTimeMillis();
     }
 
     public void run() {
+        System.out.println(System.currentTimeMillis() - System.currentTimeMillis());
         try {
             input = new Scanner(socket.getInputStream());
         } catch (IOException e) {
@@ -37,7 +41,7 @@ public class ConnectionHandler implements Runnable{
                     break;
                 }
                 else{
-                    //do stuff
+                    lastReciveTime = System.currentTimeMillis();
                 }
             }
 
