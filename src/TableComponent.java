@@ -10,10 +10,13 @@ public class TableComponent extends JPanel {
     Image cardFront;
     Image cardBack;
     Image coin;
-    public static ArrayList<PlayerInfo> players;
+    public ArrayList<PlayerInfo> players = new ArrayList<PlayerInfo>();
     private int cardW = 350; // card tile width
     private int cardH = 490; // card tile height
     public TableComponent(){
+        for (int i = 0; i < 1; i++) {
+            players.add(new PlayerInfo(DataTypes.CardType.H1, DataTypes.CardType.H2,500));
+        }
         try {
             cardFront = ImageIO.read(getClass().getResource("/resources/graphics/decks/fronts/deck_default.png"));
             cardBack = ImageIO.read(getClass().getResource("/resources/graphics/decks/backs/card_back_heavennade.png"));
@@ -27,21 +30,27 @@ public class TableComponent extends JPanel {
     }
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        int width = (int) (getWidth()*0.6);
-        int height = (int) (getHeight()*0.6);
+        int tableW = (int) (getWidth()*0.6);
+        int tableH = (int) (getHeight()*0.6);
         g.setColor(Color.getHSBColor(0.1f, 1, 0.6f));
-        g.fillOval((getWidth()-width)/2, (getHeight()-height)/2, width, height);
+        g.fillOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(10));
         g2.setColor(Color.getHSBColor(0.5f, 1, 0.6f));
-        g2.drawOval((getWidth()-width)/2, (getHeight()-height)/2, width, height);
+        g2.drawOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
+
         g.setColor(Color.getHSBColor(0,1,0));
-        try {
-            drawPlayerHand(getWidth()/2, (int) (getHeight()*0.15), g, DataTypes.CardType.S1, DataTypes.CardType.S1, 500000, 0.8f,false);
-            drawPlayerHand(getWidth()/2, (int) (getHeight()*0.85), g, DataTypes.CardType.C13, DataTypes.CardType.H1, 500000, 1f,true);
-        } catch (Exception e) {
-            e.printStackTrace();
+        int posX = 0;
+        int posY = 0;
+        int playerNum=0;
+        int angle = 360/players.size();
+        float radius = 0.7f;
+        for (int i = 0; i < players.size(); i++) {
+
+
+            drawPlayerHand(posX+getWidth()/2, posY+getHeight()/2, g, players.get(i).card1, players.get(i).card2, players.get(i).cash, 1f,i==playerNum);
         }
+
 
     }
 
