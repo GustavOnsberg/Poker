@@ -3,12 +3,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.Image;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class TableComponent extends JPanel {
     Image cardFront;
     Image cardBack;
     Image coin;
+    public static ArrayList<PlayerInfo> players;
     private int cardW = 350; // card tile width
     private int cardH = 490; // card tile height
     public TableComponent(){
