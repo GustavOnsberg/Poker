@@ -20,10 +20,9 @@ public class Main {
 
 
         socket = new Socket("localhost",33201);
-        connection = new ConnectionHandler(socket);
+        connection = new ConnectionHandler(socket,0);
 
         UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-
 
         createMenu();
 

@@ -8,6 +8,7 @@ import java.util.Scanner;
 public class Game implements Runnable {
     public static Window window;
     public static Thread windowThread;
+    public long lastHeatBest = 0;
 
 
     public Game() throws IOException {
