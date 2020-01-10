@@ -42,7 +42,7 @@ public class TableComponent extends JPanel {
         g.setColor(Color.getHSBColor(0,1,0));
         int posX = 0;
         int posY = 0;
-        int playerNum=0;
+        int playerNum=1;
         int angle = 360/players.size();
         float radius = 0.7f;
         for (int i = 0; i < players.size(); i++) {
