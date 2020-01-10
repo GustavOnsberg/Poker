@@ -10,6 +10,7 @@ public class ConnectionIn implements Runnable {
     public Thread runningThis;
     public Socket socket;
     public Scanner input;
+    public long connectionId = 0;
 
     protected BlockingQueue queue = null;
 
@@ -28,7 +29,7 @@ public class ConnectionIn implements Runnable {
                 System.out.println(socket.getInetAddress().toString()+":"+socket.getPort()+"> "+strIn);
 
                 try {
-                    queue.put(strIn);
+                    queue.put(connectionId+" "+strIn);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -12,14 +12,18 @@ public class ConnectionHandler{
     public ConnectionIn in;
     public ConnectionOut out;
 
+    public long connectionId = 0;
+
     BlockingQueue queue = new ArrayBlockingQueue(64);
 
-    public ConnectionHandler(Socket newSocket) throws IOException {
+    public ConnectionHandler(Socket newSocket, long connectionId) throws IOException {
         socket = newSocket;
+        this.connectionId = connectionId;
 
         Server.nonGameConnectionsHandler.queues.add(queue);
 
         in = new ConnectionIn(this, socket, queue);
+        in.connectionId = connectionId;
         in.runningThis = new Thread(in);
         in.runningThis.start();
 
