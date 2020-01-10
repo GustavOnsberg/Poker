@@ -34,7 +34,7 @@ public class Game implements Runnable {
 
     public void createWindow(boolean fullscreen, Game thisGame) throws IOException {
         window = new Window(fullscreen, this);
-        window.setMinimumSize(new Dimension(1000,600));
+        window.setMinimumSize(new Dimension(1100,600));
         window.setTitle("Poker");
         window.setResizable(true);
         if (fullscreen){

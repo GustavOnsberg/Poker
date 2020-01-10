@@ -1,28 +1,28 @@
-package Server;
-
+package server;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
-import java.util.regex.Pattern;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class ConnectionHandler{
 
     public Socket socket;
-    public Scanner input;
-    public PrintWriter output;
 
-    public ConnectionIn connIn;
-    public ConnectionOut connOut;
+    public ConnectionIn in;
+    public ConnectionOut out;
 
-    ConnectionHandler(Socket newSocket) throws IOException {
+    BlockingQueue queue = new ArrayBlockingQueue(64);
+
+    public ConnectionHandler(Socket newSocket) throws IOException {
         socket = newSocket;
 
-        connIn = new ConnectionIn(this, socket);
-        connIn.runningThis = new Thread(connIn);
-        connIn.runningThis.start();
+        Server.nonGameConnectionsHandler.queues.add(queue);
 
-        connOut = new ConnectionOut(this, socket);
+        in = new ConnectionIn(this, socket, queue);
+        in.runningThis = new Thread(in);
+        in.runningThis.start();
+
+        out = new ConnectionOut(this, socket);
     }
 }
