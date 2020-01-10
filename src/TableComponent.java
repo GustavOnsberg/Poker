@@ -18,12 +18,16 @@ public class TableComponent extends JPanel {
     public TableComponent(){
         cardShown = new boolean[12];
         cardShown[0] = true;
-        for (int i = 0; i < 6; i++) {
+        //test part________________________________________________________________________________________________________________________________________________--
+        for (int i = 0; i < 10; i++) {
 
             players.add(new PlayerInfo(DataTypes.CardType.H1, DataTypes.CardType.H2,500));
 
         }
-
+        for (int i = 0; i < 5; i++) {
+            comunityCards.add(DataTypes.CardType.C1);
+        }
+        //test part________________________________________________________________________________________________________________________________________________--
         try {
             cardFront = ImageIO.read(getClass().getResource("/resources/graphics/decks/fronts/deck_default.png"));
             cardBack = ImageIO.read(getClass().getResource("/resources/graphics/decks/backs/card_back_heavennade.png"));
@@ -92,10 +96,10 @@ public class TableComponent extends JPanel {
     }
     public void drawBoard(Graphics g, ArrayList<DataTypes.CardType> comCards, float sizeVar){
         float size = sizeVar*getHeight()/3000;
-        int x = (int) (getWidth()/2+getWidth()/6);
+        int x = (int) (getWidth()/2+size*2.5*cardW);
         drawCard(x, getHeight()/2, g, DataTypes.CardType.S1, cardBack, size);
         for (int i = 0; i < comCards.size(); i++) {
-            drawCard(getWidth()/2, getHeight()/2, g, comCards.get(i), cardFront, size);
+            drawCard((int) (x-(i+1)*cardW*size), getHeight()/2, g, comCards.get(i), cardFront, size);
         }
     }
     public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize){
