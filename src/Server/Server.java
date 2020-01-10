@@ -1,9 +1,10 @@
-package Server;
+package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.BlockingQueue;
 
 public class Server {
     static ArrayList<GameSession> gameSessions = new ArrayList<GameSession>();
@@ -11,6 +12,8 @@ public class Server {
     static Listener listener = new Listener();
     static Thread threadListner = new Thread(listener);
     static boolean running = true;
+    public static NonGameConnectionsHandler nonGameConnectionsHandler = new NonGameConnectionsHandler();
+    static  Thread threadNonGameConnectionsHandler = new Thread(nonGameConnectionsHandler);
 
 
     Server(){
@@ -19,7 +22,7 @@ public class Server {
 
     public static void main(String [] args){
         threadListner.start();
-
+        threadNonGameConnectionsHandler.start();
     }
 
 

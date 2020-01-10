@@ -4,36 +4,30 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import server.ConnectionHandler;
+import server.NonGameConnectionsHandler;
 
 public class Main {
 
     public static MenuWindow menuWindow;
     public static Thread windowThread;
-
-    static ClientConnectionHandler connection;
+    public static Socket socket;
+    public static ConnectionHandler connection;
 
 
 
     public static void main(String [] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException {
 
 
-            try {
-                connection = new ClientConnectionHandler();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-        connection.send("Hi server");
-
-        //connection.send("Hi server 2");
+        socket = new Socket("localhost",33201);
+        connection = new ConnectionHandler(socket);
 
         UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
 
         createMenu();
 
-
+        connection.out.send("Hi server");
 
     }
 
