@@ -13,10 +13,17 @@ public class TableComponent extends JPanel {
     public ArrayList<PlayerInfo> players = new ArrayList<PlayerInfo>();
     private int cardW = 350; // card tile width
     private int cardH = 490; // card tile height
+    boolean[] cardShown;
+    ArrayList<DataTypes.CardType> comunityCards = new ArrayList<>();
     public TableComponent(){
-        for (int i = 0; i < 1; i++) {
+        cardShown = new boolean[12];
+        cardShown[0] = true;
+        for (int i = 0; i < 6; i++) {
+
             players.add(new PlayerInfo(DataTypes.CardType.H1, DataTypes.CardType.H2,500));
+
         }
+
         try {
             cardFront = ImageIO.read(getClass().getResource("/resources/graphics/decks/fronts/deck_default.png"));
             cardBack = ImageIO.read(getClass().getResource("/resources/graphics/decks/backs/card_back_heavennade.png"));
@@ -40,40 +47,56 @@ public class TableComponent extends JPanel {
         g2.drawOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
 
         g.setColor(Color.getHSBColor(0,1,0));
-        int posX = 0;
-        int posY = 0;
-        int playerNum=1;
-        int angle = 360/players.size();
+
+        int posX;
+        int posY;
+        int playerNum=0;
+        float angle = (float) (Math.PI*2/(players.size()));
         float radius = 0.7f;
+
         for (int i = 0; i < players.size(); i++) {
             //x = sin
-            posX = (int) Math.sin(angle*i);
+            posX = (int) -(Math.sin(angle*i)*getWidth()/2*radius);
             //y = -cos
-            posY = (int) -Math.cos(angle*i);
-            drawPlayerHand(posX+getWidth()/2, posY+getHeight()/2, g, players.get(i).card1, players.get(i).card2, players.get(i).cash, 1f,i==playerNum);
+            posY = (int) (Math.cos(angle*i)*getHeight()/2*radius);
+            drawPlayerHand(posX+getWidth()/2, posY+getHeight()/2, g, players.get(i).card1, players.get(i).card2, players.get(i).cash, 1f, cardShown[i], i==playerNum);
         }
 
+        drawBoard(g, comunityCards, 1);
 
     }
 
 
-    private void drawPlayerHand(int x, int y, Graphics g, DataTypes.CardType Card1, DataTypes.CardType Card2, int cash, float sizeVar, boolean isYou){
+    private void drawPlayerHand(int x, int y, Graphics g, DataTypes.CardType Card1, DataTypes.CardType Card2, int cash, float sizeVar, boolean isShown, boolean isYou){
 
         float size = sizeVar*getHeight()/2000;
-        if (isYou == true) {
+        float eSize = (float) (size*(0.75-players.size()*0.02));
+        if (!isShown){
+            drawCard((int) (x-cardW*eSize/2), y, g, DataTypes.CardType.S1, cardBack, eSize);
+            drawCard((int) (x+cardW*eSize/2), y, g, DataTypes.CardType.S1, cardBack, eSize);
+        }else if (isShown && isYou) {
             drawCard((int) (x-cardW*size/2), y, g, Card1, cardFront, size);
             drawCard((int) (x+cardW*size/2), y, g, Card2, cardFront, size);
-        }else{
-            drawCard((int) (x-cardW*size/2), y, g, DataTypes.CardType.S1, cardBack, size);
-            drawCard((int) (x+cardW*size/2), y, g, DataTypes.CardType.S1, cardBack, size);
-            Font font = new Font("Verdana", Font.BOLD, (int) (12*size*5.5));
+        }else if(isShown && !isYou){
+            drawCard((int) (x-cardW*eSize/2), y, g, Card1, cardFront, eSize);
+            drawCard((int) (x+cardW*eSize/2), y, g, Card2, cardFront, eSize);
+        }if (!isYou){
+            Font font = new Font("Verdana", Font.BOLD, (int) (12*eSize*5.5));
             g.setFont(font);
-            g.drawString(cash+"",(int) (x-cardW*size+70*size), (int) (y+cardH*size/2+55*size));
-            g.drawImage(coin, (int) (x-cardW*size), (int) (y+cardH*size/2),(int) (70*size),(int) (70*size), this);
+            g.drawString(cash+"",(int) (x-cardW*eSize+70*eSize), (int) (y+cardH*eSize/2+55*eSize));
+            g.drawImage(coin, (int) (x-cardW*eSize), (int) (y+cardH*eSize/2),(int) (70*eSize),(int) (70*eSize), this);
         }
 
 
 
+    }
+    public void drawBoard(Graphics g, ArrayList<DataTypes.CardType> comCards, float sizeVar){
+        float size = sizeVar*getHeight()/3000;
+        int x = (int) (getWidth()/2+getWidth()/6);
+        drawCard(x, getHeight()/2, g, DataTypes.CardType.S1, cardBack, size);
+        for (int i = 0; i < comCards.size(); i++) {
+            drawCard(getWidth()/2, getHeight()/2, g, comCards.get(i), cardFront, size);
+        }
     }
     public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize){
         int thisX = card.ordinal()%13;
