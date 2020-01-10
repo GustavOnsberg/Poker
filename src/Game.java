@@ -48,4 +48,12 @@ public class Game implements Runnable {
 
         windowThread.start();
     }
+
+
+
+    public static void main(String [] args) throws IOException {
+        Game game = new Game();
+        Thread thread = new Thread(game);
+        thread.start();
+    }
 }

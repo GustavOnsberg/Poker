@@ -20,8 +20,6 @@ public class Listener implements Runnable {
             try {
                 clientSocket = serverSocket.accept();
                 Server.connectionHandlers.add(new ConnectionHandler(clientSocket));
-                Server.connectionHandlers.get(Server.connectionHandlers.size()-1).runningThis = new Thread(Server.connectionHandlers.get(Server.connectionHandlers.size()-1));
-                Server.connectionHandlers.get(Server.connectionHandlers.size()-1).runningThis.start();
             }catch(Exception e){
                 e.printStackTrace();
             }

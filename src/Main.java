@@ -10,20 +10,23 @@ public class Main {
     public static MenuWindow menuWindow;
     public static Thread windowThread;
 
-    public static Socket socket;
-    public static Scanner input;
-    public static PrintWriter output;
+    static ClientConnectionHandler connection;
+
+
 
     public static void main(String [] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException {
-        socket = new Socket("82.211.202.61",33201);
-        input = new Scanner(socket.getInputStream());
-        output = new PrintWriter(socket.getOutputStream());
 
 
-        output.print("Hi server\r\n");
-        System.out.println("Hi server");
-        output.flush();
+            try {
+                connection = new ClientConnectionHandler();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
+
+        connection.send("Hi server");
+
+        //connection.send("Hi server 2");
 
         UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
