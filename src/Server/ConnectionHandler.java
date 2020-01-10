@@ -5,47 +5,24 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
-public class ConnectionHandler implements Runnable{
+public class ConnectionHandler{
 
-    public Thread runningThis;
     public Socket socket;
     public Scanner input;
     public PrintWriter output;
 
-    long lastReciveTime = 0;
+    public ConnectionIn connIn;
+    public ConnectionOut connOut;
 
-    ConnectionHandler(Socket newSocket){
+    ConnectionHandler(Socket newSocket) throws IOException {
         socket = newSocket;
-        lastReciveTime = System.currentTimeMillis();
-    }
 
-    public void run() {
-        System.out.println(System.currentTimeMillis() - System.currentTimeMillis());
-        try {
-            input = new Scanner(socket.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        connIn = new ConnectionIn(this, socket);
+        connIn.runningThis = new Thread(connIn);
+        connIn.runningThis.start();
 
-        try {
-            output = new PrintWriter(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        while (true){
-            while(input.hasNextLine()) {
-                String strIn = input.nextLine();
-                if (strIn.equals("")){
-                    break;
-                }
-                else{
-                    lastReciveTime = System.currentTimeMillis();
-                }
-            }
-
-            //Print stuff to client
-        }
+        connOut = new ConnectionOut(this, socket);
     }
 }
