@@ -46,8 +46,10 @@ public class TableComponent extends JPanel {
         int angle = 360/players.size();
         float radius = 0.7f;
         for (int i = 0; i < players.size(); i++) {
-
-
+            //x = sin
+            posX = (int) Math.sin(angle*i);
+            //y = -cos
+            posY = (int) -Math.cos(angle*i);
             drawPlayerHand(posX+getWidth()/2, posY+getHeight()/2, g, players.get(i).card1, players.get(i).card2, players.get(i).cash, 1f,i==playerNum);
         }
 
