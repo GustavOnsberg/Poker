@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MenuWindow extends JFrame implements ActionListener {
@@ -48,6 +49,9 @@ public class MenuWindow extends JFrame implements ActionListener {
         joinPanel.add(gameCodeText);
 
 
+        btnCreate.addActionListener(this);
+
+
         for(int i = 0; i < 200; i++){
 
             gameList.add(new GameListing("Testgame " + i,3,8,"Gustav", "jhrhg74h", this));
@@ -63,6 +67,9 @@ public class MenuWindow extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(btnJoin)){
             joinGame(gameCodeText.getText());
+        }
+        else if(actionEvent.getSource().equals(btnCreate)){
+            Main.connection.out.send("create AwesomeGame");
         }
     }
 

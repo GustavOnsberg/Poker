@@ -12,6 +12,7 @@ import javax.swing.Icon;
 public class Window extends JFrame implements ActionListener, Runnable, ChangeListener {
     Game thisGame;
     boolean isFullscreen;
+    Thread runningThis;
 
 
     int playBtnW = 120;
@@ -52,6 +53,10 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         cp.setLayout(null);
         cp.add(gamePanel);
         cp.add(sidePanel);
+
+        btnRaise.addActionListener(this);
+        btnCall.addActionListener(this);
+        btnFold.addActionListener(this);
 
         betSlider.setMajorTickSpacing(10000);
         betSlider.setMinorTickSpacing(1000);
@@ -133,6 +138,18 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
             }
             dispose();
         }
+        else if(actionEvent.getSource().equals(btnRaise)){
+            Main.connection.out.send("move raise "+betSlider.getValue());
+        }
+        else if(actionEvent.getSource().equals(btnCall)){
+            Main.connection.out.send("move call");
+        }
+        else if(actionEvent.getSource().equals(btnFold)){
+            Main.connection.out.send("move fold");
+        }
+        else if(actionEvent.getSource().equals(btnSettingsLeave)){
+            Main.connection.out.send("leave");
+        }
     }
 
     @Override
@@ -141,7 +158,6 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
             if(!cp.getSize().equals(lastSize)){
                 onSizeChange();
                 lastSize.setSize(cp.getSize());
-                System.out.println("Window has been resized");
             }
             tableComponent.repaint();
             betSliderLabel.setText(betSliderLabel.getText());

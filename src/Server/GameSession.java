@@ -5,14 +5,18 @@ import java.util.concurrent.BlockingQueue;
 
 public class GameSession implements Runnable {
 
+    private String name = "";
     private long sessionId;
     private String password = "";
+    public Thread runningThis;
 
 
-    ArrayList<BlockingQueue> queues;
+    public ArrayList<BlockingQueue> queues = new ArrayList<BlockingQueue>();
 
-    public GameSession(long sessionId){
+    public GameSession(long sessionId,String name, String password){
         this.sessionId = sessionId;
+        this.name = name;
+        this.password = password;
     }
 
 

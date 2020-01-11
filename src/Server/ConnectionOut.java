@@ -14,8 +14,15 @@ public class ConnectionOut {
     }
 
 
-    public void send(String message) throws IOException {
-        output.println(message);
-        output.flush();
+    public boolean send(String message) {
+        try{
+            output.println(message);
+            output.flush();
+            System.out.println("Send: "+message);
+            return true;
+        }catch(Exception e){
+            System.out.println("Failed to send: "+message);
+            return false;
+        }
     }
 }

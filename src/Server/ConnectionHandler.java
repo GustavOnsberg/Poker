@@ -14,7 +14,7 @@ public class ConnectionHandler{
 
     public long connectionId = 0;
 
-    BlockingQueue queue = new ArrayBlockingQueue(64);
+    public BlockingQueue queue = new ArrayBlockingQueue(64);
 
     public ConnectionHandler(Socket newSocket, long connectionId) throws IOException {
         socket = newSocket;

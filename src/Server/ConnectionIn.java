@@ -12,7 +12,7 @@ public class ConnectionIn implements Runnable {
     public Scanner input;
     public long connectionId = 0;
 
-    protected BlockingQueue queue = null;
+    public BlockingQueue queue = null;
 
     ConnectionIn(ConnectionHandler connHandler, Socket newSocket, BlockingQueue queue) throws IOException {
         socket = newSocket;
@@ -26,7 +26,8 @@ public class ConnectionIn implements Runnable {
             while(input.hasNextLine()){
                 String strIn = input.nextLine();
 
-                System.out.println(socket.getInetAddress().toString()+":"+socket.getPort()+"> "+strIn);
+                if(connectionId != 0) System.out.println("Connection "+connectionId+" >"+strIn);
+                else System.out.println("Server >"+strIn);
 
                 try {
                     queue.put(connectionId+" "+strIn);

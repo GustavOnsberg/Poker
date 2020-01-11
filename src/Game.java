@@ -6,9 +6,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Game implements Runnable {
-    public static Window window;
-    public static Thread windowThread;
-    public long lastHeatBest = 0;
+    public Window window;
+    Thread runningThis;
 
 
     public Game() throws IOException {
@@ -45,9 +44,8 @@ public class Game implements Runnable {
         window.setVisible(true);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Thread windowThread = new Thread(window);
-
-        windowThread.start();
+        window.runningThis = new Thread(window);
+        window.runningThis.start();
     }
 
 
