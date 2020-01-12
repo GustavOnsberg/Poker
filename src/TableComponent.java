@@ -117,4 +117,7 @@ public class TableComponent extends JPanel {
         int thisY = card.ordinal()/13;
         g.drawImage(CardFront, (int) (x-cardW/2*cardSize*flipX), (int) (y-cardH/2*cardSize*flipY), (int) (x+cardW/2*cardSize*flipX), (int) (y+cardH/2*cardSize*flipY), thisX*cardW, thisY*cardH,  thisX*cardW+cardW, thisY*cardH+cardH, this);
     }
+    public void cardAnimation(int startX, int startY, int endX, int endY, int startTime, int endTime, float flipPos){
+        
+    }
 }
