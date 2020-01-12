@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MenuWindow extends JFrame implements ActionListener {
@@ -53,7 +52,6 @@ public class MenuWindow extends JFrame implements ActionListener {
 
 
         for(int i = 0; i < 200; i++){
-
             gameList.add(new GameListing("Testgame " + i,3,8,"Gustav", "jhrhg74h", this));
             gameList.get(i).setBackground(Color.YELLOW);
             gameList.get(i).setBounds(0,i*30,600,30);

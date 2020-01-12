@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.Scanner;
 
 public class Game implements Runnable {
     public Window window;
