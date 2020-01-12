@@ -43,6 +43,12 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
     int settingsNum = 5;
 
+    JPanel infoPanel = new JPanel();
+    JTextArea chatArea;
+    JScrollPane chatScroll;
+    JTextField chatInput = new JTextField();
+    JButton btnChatSend = new JButton("Send");
+
 
     TableComponent tableComponent = new TableComponent();
 
@@ -62,7 +68,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         betSlider.setMinorTickSpacing(1000);
         betSlider.setPaintTicks(true);
         betSlider.setPaintLabels(true);
-        betSlider.setBackground(Color.YELLOW);
+        betSlider.setBackground(null);
         betSlider.addChangeListener(this);
 
         betSliderLabel.setVisible(true);
@@ -122,6 +128,18 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         btnSettingsLeave.addActionListener(this);
 
 
+
+        chatArea = new JTextArea("",5,50);
+        chatArea.setLineWrap(true);
+        chatArea.setEditable(false);
+        chatArea.setWrapStyleWord(true);
+        chatScroll = new JScrollPane(chatArea);
+        chatScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        btnChatSend.addActionListener(this);
+        sidePanel.add(chatScroll);
+        sidePanel.add(chatInput);
+        sidePanel.add(btnChatSend);
+
         onSizeChange();
     }
 
@@ -149,6 +167,9 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         }
         else if(actionEvent.getSource().equals(btnSettingsLeave)){
             Main.connection.out.send("leave");
+        }
+        else if(actionEvent.getSource().equals(btnChatSend)){
+            Main.connection.out.send("chat "+chatInput.getText());
         }
     }
 
@@ -188,6 +209,10 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         betSliderLabel.setBounds(betSlider.getX() + betSlider.getWidth() * betSlider.getValue() / betSlider.getMaximum(),betSlider.getY() - 10,200,15);
 
         tableComponent.setBounds(0,0,gamePanel.getWidth(),betSliderLabel.getY());
+
+        chatScroll.setBounds(0,300,sidePanelW,sidePanel.getHeight()-330);
+        chatInput.setBounds(0,sidePanel.getHeight()-30,sidePanelW-100,30);
+        btnChatSend.setBounds(sidePanelW-100,sidePanel.getHeight()-30,100,30);
     }
 
     @Override

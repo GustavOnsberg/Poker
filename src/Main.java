@@ -65,6 +65,15 @@ public class Main {
                     game.runningThis = new Thread(game);
                     game.runningThis.start();
                     break;
+                case "gj":
+                    game = new Game();
+                    game.runningThis = new Thread(game);
+                    game.runningThis.start();
+                case "chat":
+                    try{
+                        String senderName = "Connection "+inputArray[0];
+                        game.window.chatArea.append("\n\n"+senderName+": "+input.substring(10));
+                    }catch (Exception e){};
             }
         }catch(Exception e){
 

@@ -64,7 +64,7 @@ public class MenuWindow extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(btnJoin)){
-            joinGame(gameCodeText.getText());
+            Main.connection.out.send("join 1");
         }
         else if(actionEvent.getSource().equals(btnCreate)){
             Main.connection.out.send("create AwesomeGame");

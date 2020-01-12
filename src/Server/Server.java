@@ -53,29 +53,33 @@ public class Server {
     }
 
 
-    public static ConnectionHandler getConnectionHandlerFromId(long id) throws Exception{
-        int lastJump = connectionHandlers.size();
+    public static ConnectionHandler getConnectionHandlerFromId(long id, ArrayList<ConnectionHandler> connHandlers) throws Exception{
+        int lastJump = connHandlers.size();
         int lastCheck = 0;
         long lastId = 0;
         while(true){
             if (lastId < id){
                 lastJump/=2;
                 lastCheck+=lastJump;
-                lastId = connectionHandlers.get(lastCheck).connectionId;
+                lastId = connHandlers.get(lastCheck).connectionId;
             }
             else if(lastId > id){
                 lastJump/=2;
                 lastCheck-=lastJump;
-                lastId = connectionHandlers.get(lastCheck).connectionId;
+                lastId = connHandlers.get(lastCheck).connectionId;
             }
 
             if(lastId == id){
-                return connectionHandlers.get(lastCheck);
+                return connHandlers.get(lastCheck);
             }
 
             if(lastJump == 0){
                 throw new Exception("Connection not found");
             }
         }
+    }
+
+    public static ConnectionHandler getConnectionHandlerFromId(long id) throws Exception{
+        return getConnectionHandlerFromId(id, connectionHandlers);
     }
 }
