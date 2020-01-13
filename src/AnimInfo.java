@@ -10,13 +10,14 @@ public class AnimInfo {
     float endFlipPos;
     float startSize;
     float endSize;
+    long time = System.currentTimeMillis();
     AnimInfo(int startX, int startY, int endX, int endY, long startTime, long endTime, DataTypes.CardType card, float startFlipPos, float endFlipPos, float startSize, float endSize){
         this.startX=startX;
         this.startY=startY;
         this.endX=endX;
         this.endY=endY;
-        this.startTime=startTime+System.currentTimeMillis();
-        this.endTime=endTime+System.currentTimeMillis();
+        this.startTime=startTime+time;
+        this.endTime=endTime+time;
         this.card = card;
         this.startFlipPos=startFlipPos;
         this.endFlipPos=endFlipPos;

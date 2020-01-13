@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.Image;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class TableComponent extends JPanel {
@@ -16,20 +17,19 @@ public class TableComponent extends JPanel {
     public ArrayList<PlayerInfo> players = new ArrayList<>();
     public ArrayList<DataTypes.CardType> communityCards = new ArrayList<>();
     public ArrayList<AnimInfo> animList = new ArrayList<>();
+    private GameLogic gameLogic = new GameLogic();
     public TableComponent(){
         cardShown = new boolean[12];
         cardShown[0] = true;
         //test part________________________________________________________________________________________________________________________________________________--
+        animList.add(new AnimInfo(getWidth()/2, getHeight()/2, getWidth(), getHeight(), 1000, 10000, DataTypes.CardType.S13, true, 1));
         for (int i = 0; i < 6; i++) {
-
+            cardShown[i] = true;
             players.add(new PlayerInfo(DataTypes.CardType.H4, DataTypes.CardType.H2,500));
 
         }
-        for (int i = 0; i < 5; i++) {
-            communityCards.add(DataTypes.CardType.C1);
-        }
-        animList.add(new AnimInfo(0, 0, getWidth(), getHeight(), 0, 10000, DataTypes.CardType.S1, true, 1));
-
+        gameLogic.NewComCards(communityCards);
+        gameLogic.NewHandCards(players,3);
         //test part________________________________________________________________________________________________________________________________________________--
         try {
             cardFront = ImageIO.read(getClass().getResource("/resources/graphics/decks/fronts/deck_default.png"));
@@ -83,9 +83,6 @@ public class TableComponent extends JPanel {
             g.drawString(cash+"",(int) (x-cardW*eSize+70*eSize), (int) (y+cardH*eSize/2+55*eSize));
             g.drawImage(coin, (int) (x-cardW*eSize), (int) (y+cardH*eSize/2),(int) (70*eSize),(int) (70*eSize), this);
         }
-
-
-
     }
     public void drawBoard(Graphics g, ArrayList<DataTypes.CardType> comCards, float sizeVar){
         float size = sizeVar*getHeight()/3000;
@@ -124,20 +121,22 @@ public class TableComponent extends JPanel {
     public void drawAnim(ArrayList<AnimInfo> animList, Graphics g){
         long time = System.currentTimeMillis();
         for (int i = 0; i < animList.size(); i++) {
-            if (animList.get(i).endTime < time) {
+            AnimInfo element = animList.get(i);
+            long endTime = element.endTime;
+            if (endTime <= time) {
                 animList.remove(i);
                 i--;
-            }else if (animList.get(i).startTime < time){
-                long startT = animList.get(i).startTime;
-                long endT = animList.get(i).endTime;
-                int startX = animList.get(i).startX;
-                int endX = animList.get(i).endX;
-                int startY = animList.get(i).startY;
-                int endY = animList.get(i).endY;
-                float startF = animList.get(i).startFlipPos;
-                float endF = animList.get(i).endFlipPos;
-                float startS = animList.get(i).startSize;
-                float endS = animList.get(i).endSize;
+            }else if (animList.get(i).startTime >= time){
+                long startT = element.startTime;
+                long endT = element.endTime;
+                int startX = element.startX;
+                int endX = element.endX;
+                int startY = element.startY;
+                int endY = element.endY;
+                float startF = element.startFlipPos;
+                float endF = element.endFlipPos;
+                float startS = element.startSize;
+                float endS = element.endSize;
                 float progress = (time-startT)/(endT-startT);
                 float progressFlip = startF+(endF-startF)*progress;
                 float progressSize = startS+(endS-startS)*progress;
