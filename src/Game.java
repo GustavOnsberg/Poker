@@ -47,7 +47,8 @@ public class Game implements Runnable {
 
 
 
-    public static void main(String [] args) throws IOException {
+    public static void main(String [] args) throws IOException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         Game game = new Game();
         Thread thread = new Thread(game);
         thread.start();

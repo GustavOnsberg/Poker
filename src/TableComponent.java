@@ -10,23 +10,25 @@ public class TableComponent extends JPanel {
     Image cardFront;
     Image cardBack;
     Image coin;
-    public ArrayList<PlayerInfo> players = new ArrayList<PlayerInfo>();
     private int cardW = 350; // card tile width
     private int cardH = 490; // card tile height
     boolean[] cardShown;
-    ArrayList<DataTypes.CardType> comunityCards = new ArrayList<>();
+    public ArrayList<PlayerInfo> players = new ArrayList<>();
+    public ArrayList<DataTypes.CardType> comunityCards = new ArrayList<>();
+    public ArrayList<AnimInfo> Animlist = new ArrayList<>();
     public TableComponent(){
         cardShown = new boolean[12];
         cardShown[0] = true;
         //test part________________________________________________________________________________________________________________________________________________--
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 6; i++) {
 
-            players.add(new PlayerInfo(DataTypes.CardType.H1, DataTypes.CardType.H2,500));
+            players.add(new PlayerInfo(DataTypes.CardType.H4, DataTypes.CardType.H2,500));
 
         }
         for (int i = 0; i < 5; i++) {
             comunityCards.add(DataTypes.CardType.C1);
         }
+
         //test part________________________________________________________________________________________________________________________________________________--
         try {
             cardFront = ImageIO.read(getClass().getResource("/resources/graphics/decks/fronts/deck_default.png"));
@@ -56,7 +58,7 @@ public class TableComponent extends JPanel {
         int posY;
         int playerNum=0;
         float angle = (float) (Math.PI*2/(players.size()));
-        float radius = 0.7f;
+        float radius = 0.8f;
 
         for (int i = 0; i < players.size(); i++) {
             //x = sin
@@ -71,20 +73,18 @@ public class TableComponent extends JPanel {
     }
 
 
-    private void drawPlayerHand(int x, int y, Graphics g, DataTypes.CardType Card1, DataTypes.CardType Card2, int cash, float sizeVar, boolean isShown, boolean isYou){
+    private void drawPlayerHand(int x, int y, Graphics g, DataTypes.CardType card1, DataTypes.CardType card2, int cash, float sizeVar, boolean isShown, boolean isYou){
 
         float size = sizeVar*getHeight()/2000;
         float eSize = (float) (size*(0.75-players.size()*0.02));
-        if (!isShown){
-            drawCard((int) (x-cardW*eSize/2), y, g, DataTypes.CardType.S1, cardBack, eSize);
-            drawCard((int) (x+cardW*eSize/2), y, g, DataTypes.CardType.S1, cardBack, eSize);
-        }else if (isShown && isYou) {
-            drawCard((int) (x-cardW*size/2), y, g, Card1, cardFront, size);
-            drawCard((int) (x+cardW*size/2), y, g, Card2, cardFront, size);
-        }else if(isShown && !isYou){
-            drawCard((int) (x-cardW*eSize/2), y, g, Card1, cardFront, eSize);
-            drawCard((int) (x+cardW*eSize/2), y, g, Card2, cardFront, eSize);
-        }if (!isYou){
+        if (isYou) {
+            drawCard((int) (x-cardW*size/2), y, g, card1, cardFront, size,isShown);
+            drawCard((int) (x+cardW*size/2), y, g, card2, cardFront, size, isShown);
+        }else {
+            drawCard((int) (x-cardW*eSize/2), y, g, card1, cardFront, eSize, isShown);
+            drawCard((int) (x+cardW*eSize/2), y, g, card2, cardFront, eSize,isShown);
+        }
+        if (!isYou){
             Font font = new Font("Verdana", Font.BOLD, (int) (12*eSize*5.5));
             g.setFont(font);
             g.drawString(cash+"",(int) (x-cardW*eSize+70*eSize), (int) (y+cardH*eSize/2+55*eSize));
@@ -97,27 +97,26 @@ public class TableComponent extends JPanel {
     public void drawBoard(Graphics g, ArrayList<DataTypes.CardType> comCards, float sizeVar){
         float size = sizeVar*getHeight()/3000;
         int x = (int) (getWidth()/2+size*2.5*cardW);
-        drawCard(x, getHeight()/2, g, DataTypes.CardType.S1, cardBack, size);
+        drawCard(x, getHeight()/2, g, DataTypes.CardType.S1, cardBack, size, false);
         for (int i = 0; i < comCards.size(); i++) {
-            drawCard((int) (x-(i+1)*cardW*size), getHeight()/2, g, comCards.get(i), cardFront, size);
+            drawCard((int) (x-(i+1)*cardW*size), getHeight()/2, g, comCards.get(i), cardFront, size, true);
         }
     }
-    public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize){
+    public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize, boolean isShown){
+        drawCard(x, y, g, card, cardImage, cardSize,isShown, 1, 1);
+    }
+    public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize, boolean isShown, float flipX){
+        drawCard(x, y, g, card, cardImage, cardSize, isShown, flipX, 1);
+    }
+    public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize, boolean isShown, float flipX, float flipY){
+        if (card != DataTypes.CardType.none && !isShown) {
+            card = DataTypes.CardType.S1;
+            cardImage = cardBack;
+        }
         int thisX = card.ordinal()%13;
         int thisY = card.ordinal()/13;
-        g.drawImage(cardImage, (int) (x-cardW/2*cardSize), (int) (y-cardH/2*cardSize), (int) (x+cardW/2*cardSize), (int) (y+cardH/2*cardSize), thisX*cardW, thisY*cardH,  thisX*cardW+cardW, thisY*cardH+cardH, this);
+        g.drawImage(cardImage, (int) (x-cardW/2*cardSize*flipX), (int) (y-cardH/2*cardSize*flipY), (int) (x+cardW/2*cardSize*flipX), (int) (y+cardH/2*cardSize*flipY), thisX*cardW, thisY*cardH,  thisX*cardW+cardW, thisY*cardH+cardH, this);
     }
-    public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image CardFront, float cardSize, float flipX){
-        int thisX = card.ordinal()%13;
-        int thisY = card.ordinal()/13;
-        g.drawImage(CardFront, (int) (x-cardW/2*cardSize*flipX), (int) (y-cardH/2*cardSize), (int) (x+cardW/2*cardSize*flipX), (int) (y+cardH/2*cardSize), thisX*cardW, thisY*cardH,  thisX*cardW+cardW, thisY*cardH+cardH, this);
-    }
-    public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image CardFront, float cardSize, float flipX, float flipY){
-        int thisX = card.ordinal()%13;
-        int thisY = card.ordinal()/13;
-        g.drawImage(CardFront, (int) (x-cardW/2*cardSize*flipX), (int) (y-cardH/2*cardSize*flipY), (int) (x+cardW/2*cardSize*flipX), (int) (y+cardH/2*cardSize*flipY), thisX*cardW, thisY*cardH,  thisX*cardW+cardW, thisY*cardH+cardH, this);
-    }
-    public void cardAnimation(int startX, int startY, int endX, int endY, int startTime, int endTime, float flipPos){
-        
-    }
+
+
 }
