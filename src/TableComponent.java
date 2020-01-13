@@ -14,8 +14,8 @@ public class TableComponent extends JPanel {
     private int cardH = 490; // card tile height
     boolean[] cardShown;
     public ArrayList<PlayerInfo> players = new ArrayList<>();
-    public ArrayList<DataTypes.CardType> comunityCards = new ArrayList<>();
-    public ArrayList<AnimInfo> Animlist = new ArrayList<>();
+    public ArrayList<DataTypes.CardType> communityCards = new ArrayList<>();
+    public ArrayList<AnimInfo> animList = new ArrayList<>();
     public TableComponent(){
         cardShown = new boolean[12];
         cardShown[0] = true;
@@ -26,8 +26,9 @@ public class TableComponent extends JPanel {
 
         }
         for (int i = 0; i < 5; i++) {
-            comunityCards.add(DataTypes.CardType.C1);
+            communityCards.add(DataTypes.CardType.C1);
         }
+        animList.add(new AnimInfo(0, 0, getWidth(), getHeight(), 0, 10000, DataTypes.CardType.S1, true, 1));
 
         //test part________________________________________________________________________________________________________________________________________________--
         try {
@@ -43,17 +44,14 @@ public class TableComponent extends JPanel {
     }
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        int tableW = (int) (getWidth()*0.6);
-        int tableH = (int) (getHeight()*0.6);
-        g.setColor(Color.getHSBColor(0.1f, 1, 0.6f));
-        g.fillOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(10));
-        g2.setColor(Color.getHSBColor(0.5f, 1, 0.6f));
-        g2.drawOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
+        drawBackground(g);
+        drawPlayers(g);
+        drawBoard(g, communityCards, 1);
+        drawAnim(animList, g);
+        g.drawString(System.currentTimeMillis()+"",0,10);
+    }
 
-        g.setColor(Color.getHSBColor(0,1,0));
-
+    public void drawPlayers(Graphics g){
         int posX;
         int posY;
         int playerNum=0;
@@ -67,13 +65,8 @@ public class TableComponent extends JPanel {
             posY = (int) (Math.cos(angle*i)*getHeight()/2*radius);
             drawPlayerHand(posX+getWidth()/2, posY+getHeight()/2, g, players.get(i).card1, players.get(i).card2, players.get(i).cash, 1f, cardShown[i], i==playerNum);
         }
-
-        drawBoard(g, comunityCards, 1);
-
     }
-
-
-    private void drawPlayerHand(int x, int y, Graphics g, DataTypes.CardType card1, DataTypes.CardType card2, int cash, float sizeVar, boolean isShown, boolean isYou){
+    public void drawPlayerHand(int x, int y, Graphics g, DataTypes.CardType card1, DataTypes.CardType card2, int cash, float sizeVar, boolean isShown, boolean isYou){
 
         float size = sizeVar*getHeight()/2000;
         float eSize = (float) (size*(0.75-players.size()*0.02));
@@ -117,6 +110,49 @@ public class TableComponent extends JPanel {
         int thisY = card.ordinal()/13;
         g.drawImage(cardImage, (int) (x-cardW/2*cardSize*flipX), (int) (y-cardH/2*cardSize*flipY), (int) (x+cardW/2*cardSize*flipX), (int) (y+cardH/2*cardSize*flipY), thisX*cardW, thisY*cardH,  thisX*cardW+cardW, thisY*cardH+cardH, this);
     }
-
+    public void drawBackground(Graphics g){
+        int tableW = (int) (getWidth()*0.6);
+        int tableH = (int) (getHeight()*0.6);
+        g.setColor(Color.getHSBColor(0.1f, 1, 0.6f));
+        g.fillOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setStroke(new BasicStroke(10));
+        g2.setColor(Color.getHSBColor(0.5f, 1, 0.6f));
+        g2.drawOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
+        g.setColor(Color.getHSBColor(0,1,0));
+    }
+    public void drawAnim(ArrayList<AnimInfo> animList, Graphics g){
+        long time = System.currentTimeMillis();
+        for (int i = 0; i < animList.size(); i++) {
+            if (animList.get(i).endTime < time) {
+                animList.remove(i);
+                i--;
+            }else if (animList.get(i).startTime < time){
+                long startT = animList.get(i).startTime;
+                long endT = animList.get(i).endTime;
+                int startX = animList.get(i).startX;
+                int endX = animList.get(i).endX;
+                int startY = animList.get(i).startY;
+                int endY = animList.get(i).endY;
+                float startF = animList.get(i).startFlipPos;
+                float endF = animList.get(i).endFlipPos;
+                float startS = animList.get(i).startSize;
+                float endS = animList.get(i).endSize;
+                float progress = (time-startT)/(endT-startT);
+                float progressFlip = startF+(endF-startF)*progress;
+                float progressSize = startS+(endS-startS)*progress;
+                Image setImage;
+                boolean isShown;
+                if (progressFlip>0) {
+                    setImage = cardFront;
+                    isShown = true;
+                }else{
+                    setImage = cardBack;
+                    isShown = false;
+                }
+                drawCard((int) (startX+(endX-startX)*progress), (int) (startY+(endY-startY)*progress), g, animList.get(i).card, setImage, progressSize,isShown);
+            }
+        }
+    }
 
 }
