@@ -1,5 +1,6 @@
 package server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
@@ -8,10 +9,10 @@ public class GameSession implements Runnable {
     private String name = "";
     private long sessionId;
     private String password = "";
+    private int maxPlayers = 8;
     public Thread runningThis;
 
 
-    public ArrayList<BlockingQueue> queues = new ArrayList<BlockingQueue>();
     public ArrayList<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>();
 
     public GameSession(long sessionId,String name, String password){
@@ -32,6 +33,17 @@ public class GameSession implements Runnable {
                         e.printStackTrace();
                     }
                 }
+                else if(System.currentTimeMillis() - connectionHandlers.get(i).lastHeatBeat > 60000){
+                    try {
+                        long removedId = connectionHandlers.get(i).connectionId;
+                        connectionHandlers.get(i).socket.close();
+                        connectionHandlers.remove(i);
+                        System.out.println("Game Session "+sessionId+" >Connection with id "+removedId+" has benn removed due to missing heartbeat");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    i--;
+                }
             }
 
             try {
@@ -48,6 +60,12 @@ public class GameSession implements Runnable {
     }
     public String getPassword() {
         return password;
+    }
+    public String getName() {
+        return name;
+    }
+    public int getMaxPlayers() {
+        return maxPlayers;
     }
 
     public void sessionDo(String input) throws Exception {

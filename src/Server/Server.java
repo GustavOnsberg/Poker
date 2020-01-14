@@ -17,7 +17,17 @@ public class Server {
 
     }
 
-    public static void main(String [] args){
+    public static void main(String [] args) throws Exception {
+        ArrayList<Integer> testarray = new ArrayList<Integer>();
+        testarray.add(2);
+        testarray.add(2);
+        testarray.add(2);
+        testarray.add(2);
+        testarray.add(2);
+        testarray.add(2);
+        testarray.add(2);
+        System.out.println(GameLogic.evaluateHand(testarray));
+
         threadListner.start();
         threadNonGameConnectionsHandler.start();
     }
@@ -27,19 +37,19 @@ public class Server {
 
 
     public static GameSession getGameSessionFromId(long id) throws Exception{
-        int lastJump = gameSessions.size();
+        int lastJump = gameSessions.size()-1;
         int lastCheck = 0;
         long lastId = 0;
         while(true){
             if (lastId < id){
-                lastJump/=2;
                 lastCheck+=lastJump;
                 lastId = gameSessions.get(lastCheck).getSessionId();
+                lastJump/=2;
             }
             else if(lastId > id){
-                lastJump/=2;
                 lastCheck-=lastJump;
                 lastId = gameSessions.get(lastCheck).getSessionId();
+                lastJump/=2;
             }
 
             if(lastId == id){
@@ -54,19 +64,19 @@ public class Server {
 
 
     public static ConnectionHandler getConnectionHandlerFromId(long id, ArrayList<ConnectionHandler> connHandlers) throws Exception{
-        int lastJump = connHandlers.size();
+        int lastJump = connHandlers.size()-1;
         int lastCheck = 0;
         long lastId = 0;
         while(true){
             if (lastId < id){
-                lastJump/=2;
                 lastCheck+=lastJump;
                 lastId = connHandlers.get(lastCheck).connectionId;
+                lastJump/=2;
             }
             else if(lastId > id){
-                lastJump/=2;
                 lastCheck-=lastJump;
                 lastId = connHandlers.get(lastCheck).connectionId;
+                lastJump/=2;
             }
 
             if(lastId == id){

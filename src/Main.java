@@ -2,8 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import server.ConnectionHandler;
+import server.GameLogic;
 
 public class Main {
 
@@ -28,6 +30,10 @@ public class Main {
         createMenu();
 
         connection.out.send("Hi server");
+
+        Thread.sleep(1000);
+
+        connection.out.send("gg");
 
         while(true){
             if (System.currentTimeMillis() - lastHeatBest > 20000){
@@ -69,11 +75,16 @@ public class Main {
                     game = new Game();
                     game.runningThis = new Thread(game);
                     game.runningThis.start();
+                    break;
                 case "chat":
                     try{
                         String senderName = "Connection "+inputArray[0];
                         game.window.chatArea.append("\n\n"+senderName+": "+input.substring(10));
                     }catch (Exception e){};
+                    break;
+                case "gs":
+                    menuWindow.addGame();
+                    break;
             }
         }catch(Exception e){
 

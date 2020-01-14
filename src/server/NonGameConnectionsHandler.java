@@ -1,5 +1,6 @@
 package server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
@@ -21,6 +22,17 @@ public class NonGameConnectionsHandler implements Runnable{
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+                else if(System.currentTimeMillis() - Server.connectionHandlers.get(i).lastHeatBeat > 60000){
+                    try {
+                        long removedId = Server.connectionHandlers.get(i).connectionId;
+                        Server.connectionHandlers.get(i).socket.close();
+                        Server.connectionHandlers.remove(i);
+                        System.out.println("NGCH >Connection with id "+removedId+" has benn removed due to missing heartbeat");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    i--;
                 }
             }
 
@@ -45,8 +57,6 @@ public class NonGameConnectionsHandler implements Runnable{
                     if(inputArray.length > 3){
                         Server.gameSessions.add(new GameSession(Server.lastGameSessionId + 1, inputArray[2],inputArray[3]));
                         Server.lastGameSessionId++;
-                        Server.gameSessions.get(Server.gameSessions.size()-1).queues.add(Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).queue);
-                        queues.remove(Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).queue);
                         Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).out.send("gc");
 
                         Server.gameSessions.get(Server.gameSessions.size()-1).connectionHandlers.add(Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])));
@@ -57,8 +67,6 @@ public class NonGameConnectionsHandler implements Runnable{
                         Server.lastGameSessionId++;
                         Server.gameSessions.get(Server.gameSessions.size()-1).runningThis = new Thread(Server.gameSessions.get(Server.gameSessions.size()-1));
                         Server.gameSessions.get(Server.gameSessions.size()-1).runningThis.start();
-                        Server.getGameSessionFromId(Server.lastGameSessionId).queues.add(Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).queue);
-                        queues.remove(Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).queue);
                         Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).out.send("gc");
 
                         Server.gameSessions.get(Server.gameSessions.size()-1).connectionHandlers.add(Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])));
@@ -82,6 +90,18 @@ public class NonGameConnectionsHandler implements Runnable{
                         Server.connectionHandlers.remove(Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])));
                         Server.getGameSessionFromId(Long.parseLong(inputArray[2])).connectionHandlers.get(Server.getGameSessionFromId(Long.parseLong(inputArray[2])).connectionHandlers.size()-1).out.send("gj");
                     }
+                    break;
+                case "gg":
+                    int gamesSend = 0;
+                    for(int i = 0; i < Server.gameSessions.size(); i++){
+                        if(Server.gameSessions.get(i).getPassword().equals("") && gamesSend < 16){
+                            Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).out.send("gs "+Server.gameSessions.get(i).getSessionId()+" "+Server.gameSessions.get(i).getName()+" "+Server.gameSessions.get(i).connectionHandlers.size()+"/"+Server.gameSessions.get(i).getMaxPlayers());
+                            gamesSend++;
+                        }
+                    }
+                    break;
+                case "hb":
+                    Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).lastHeatBeat = System.currentTimeMillis();
                     break;
             }
         }
