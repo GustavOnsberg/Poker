@@ -2,6 +2,7 @@ package server;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 
 public class GameSession implements Runnable {
@@ -12,6 +13,13 @@ public class GameSession implements Runnable {
     private int maxPlayers = 8;
     public Thread runningThis;
 
+    GameState gameState = GameState.Setup;
+    RoundState roundState = RoundState.PreFlop;
+    int dealer = 0;
+    int smallBlind = 0;
+    int bigBlind = 0;
+
+    GameLogic gameLogic = new GameLogic();
 
     public ArrayList<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>();
 
@@ -45,6 +53,21 @@ public class GameSession implements Runnable {
                     i--;
                 }
             }
+
+
+
+
+
+            if(gameState == GameState.Ready && connectionHandlers.size() > 1){
+                for(int i = 0; i < connectionHandlers.size(); i++){
+                    if(connectionHandlers.get(i).playerState == PlayerState.Folded){
+                        connectionHandlers.get(i).playerState = PlayerState.Playing;
+                    }
+                }
+                distributeButton(0);
+                dealCards();
+            }
+
 
             try {
                 Thread.sleep(100);
@@ -82,6 +105,33 @@ public class GameSession implements Runnable {
                     }catch (Exception e){}
                     break;
             }
+        }
+    }
+
+    public void distributeButton(int dealer){
+        this.dealer = dealer%connectionHandlers.size();
+        smallBlind = (dealer+1)%connectionHandlers.size();
+        bigBlind = (dealer+2)%connectionHandlers.size();
+
+        broadcast("setup dealer "+dealer);
+        broadcast("setup smallblind "+smallBlind);
+        broadcast("setup bigblind "+bigBlind);
+    }
+
+    public void dealCards(){
+        for(int i = 0; i < connectionHandlers.size(); i++){
+            connectionHandlers.get(i).card0 = gameLogic.takeCard();
+            connectionHandlers.get(i).out.send("setup deal card0 "+connectionHandlers.get(i).card0);
+        }
+        for(int i = 0; i < connectionHandlers.size(); i++){
+            connectionHandlers.get(i).card1 = gameLogic.takeCard();
+            connectionHandlers.get(i).out.send("setup deal card1 "+connectionHandlers.get(i).card1);
+        }
+    }
+
+    public void broadcast(String message){
+        for(int i = 0; i < connectionHandlers.size(); i++){
+            connectionHandlers.get(i).out.send(message);
         }
     }
 }

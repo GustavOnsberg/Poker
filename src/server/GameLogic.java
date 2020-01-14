@@ -22,6 +22,12 @@ public class GameLogic {
         Collections.shuffle(deck);
     }
 
+    public int takeCard(){
+        int card = deck.get(0);
+        deck.remove(0);
+        return card;
+    }
+
 
 
     public static int evaluateHand(ArrayList<Integer> hand) throws Exception {

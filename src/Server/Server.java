@@ -18,16 +18,6 @@ public class Server {
     }
 
     public static void main(String [] args) throws Exception {
-        ArrayList<Integer> testarray = new ArrayList<Integer>();
-        testarray.add(2);
-        testarray.add(2);
-        testarray.add(2);
-        testarray.add(2);
-        testarray.add(2);
-        testarray.add(2);
-        testarray.add(2);
-        System.out.println(GameLogic.evaluateHand(testarray));
-
         threadListner.start();
         threadNonGameConnectionsHandler.start();
     }
