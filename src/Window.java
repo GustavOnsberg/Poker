@@ -145,7 +145,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
 
 
-
+    
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(btnSettingsFullscreen)){
@@ -172,7 +172,12 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
             Main.connection.out.send("chat "+chatInput.getText());
         }
         else if(actionEvent.getSource().equals(btnSettingsDeck)){
-            tableComponent.animList.add(new AnimInfo(0, 0, getWidth()/2, getHeight()/2, 0, 1000, DataTypes.CardType.getRandomCard(), 1,-1,  0.1f,1));
+            int startEntityId = -1;
+            int endEntityId = 4;
+            int startCardId = 0;
+            int endCardId = 0;
+            tableComponent.giveCard(startEntityId,endEntityId,startCardId,endCardId, DataTypes.CardType.getRandomCard());
+            tableComponent.takeCard(startEntityId,endEntityId,startCardId,endCardId);
         }
     }
 

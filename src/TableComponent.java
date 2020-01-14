@@ -8,11 +8,16 @@ import java.util.Random;
 
 
 public class TableComponent extends JPanel {
+//setup
     Image cardFront;
     Image cardBack;
     Image coin;
     private int cardW = 350; // card tile width
     private int cardH = 490; // card tile height
+    public float radius = 0.8f;
+    public float sizeVar = 1f;
+    public float angle;
+    public int playerNum;
     boolean[] cardShown;
     public ArrayList<PlayerInfo> players = new ArrayList<>();
     public ArrayList<DataTypes.CardType> communityCards = new ArrayList<>();
@@ -24,11 +29,12 @@ public class TableComponent extends JPanel {
         //test part________________________________________________________________________________________________________________________________________________--
 
         for (int i = 0; i < 6; i++) {
-            players.add(new PlayerInfo(DataTypes.CardType.H4, DataTypes.CardType.H2,500));
+            cardShown[i] = true;
+            players.add(new PlayerInfo(DataTypes.CardType.none, DataTypes.CardType.none,500));
 
         }
-        gameLogic.NewComCards(communityCards);
-        gameLogic.NewHandCards(players,3);
+        players.get(4).setCard(0, DataTypes.CardType.S1);
+
         //test part________________________________________________________________________________________________________________________________________________--
         try {
             cardFront = ImageIO.read(getClass().getResource("/resources/graphics/decks/fronts/deck_default.png"));
@@ -41,47 +47,51 @@ public class TableComponent extends JPanel {
     public Dimension getPreferredSize(){
         return super.getPreferredSize();
     }
+
+//loop
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         drawBackground(g);
         drawPlayers(g);
-        drawBoard(g, communityCards, 1);
+        drawBoard(g, communityCards, sizeVar);
         drawAnim(animList, g);
         g.drawString(System.currentTimeMillis()+"",0,10);
     }
 
+//draw functions
     public void drawPlayers(Graphics g){
         int posX;
         int posY;
-        int playerNum=0;
+        playerNum=0;
         float angle = (float) (Math.PI*2/(players.size()));
-        float radius = 0.8f;
 
         for (int i = 0; i < players.size(); i++) {
             //x = sin
-            posX = (int) -(Math.sin(angle*i)*getWidth()/2*radius);
+            posX = (int) (-Math.sin(angle*i)*getWidth()/2*radius);
             //y = -cos
             posY = (int) (Math.cos(angle*i)*getHeight()/2*radius);
-            drawPlayerHand(posX+getWidth()/2, posY+getHeight()/2, g, players.get(i).card1, players.get(i).card2, players.get(i).cash, 1f, cardShown[i], i==playerNum);
+            drawPlayerHand(posX+getWidth()/2, posY+getHeight()/2, g, players.get(i).card0, players.get(i).card1, players.get(i).cash, 1f, cardShown[i], i==playerNum);
         }
     }
-    public void drawPlayerHand(int x, int y, Graphics g, DataTypes.CardType card1, DataTypes.CardType card2, int cash, float sizeVar, boolean isShown, boolean isYou){
+    public void drawPlayerHand(int x, int y, Graphics g, DataTypes.CardType card0, DataTypes.CardType card1, int cash, float sizeVar, boolean isShown, boolean isYou){
 
         float size = sizeVar*getHeight()/2000;
         float eSize = (float) (size*(0.75-players.size()*0.02));
         if (isYou) {
-            drawCard((int) (x-cardW*size/2), y, g, card1, cardFront, size,isShown);
-            drawCard((int) (x+cardW*size/2), y, g, card2, cardFront, size, isShown);
+            //cards
+            drawCard((int) (x-cardW*size/2), y, g, card0, cardFront, size,isShown);
+            drawCard((int) (x+cardW*size/2), y, g, card1, cardFront, size, isShown);
         }else {
-            drawCard((int) (x-cardW*eSize/2), y, g, card1, cardFront, eSize, isShown);
-            drawCard((int) (x+cardW*eSize/2), y, g, card2, cardFront, eSize,isShown);
-        }
-        if (!isYou){
+            //cards
+            drawCard((int) (x-cardW*eSize/2), y, g, card0, cardFront, eSize, isShown);
+            drawCard((int) (x+cardW*eSize/2), y, g, card1, cardFront, eSize,isShown);
+            //cash + cash icon
             Font font = new Font("Verdana", Font.BOLD, (int) (12*eSize*5.5));
             g.setFont(font);
             g.drawString(cash+"",(int) (x-cardW*eSize+70*eSize), (int) (y+cardH*eSize/2+55*eSize));
             g.drawImage(coin, (int) (x-cardW*eSize), (int) (y+cardH*eSize/2),(int) (70*eSize),(int) (70*eSize), this);
         }
+
     }
     public void drawBoard(Graphics g, ArrayList<DataTypes.CardType> comCards, float sizeVar){
         float size = sizeVar*getHeight()/3000;
@@ -104,7 +114,8 @@ public class TableComponent extends JPanel {
         }
         int thisX = card.ordinal()%13;
         int thisY = card.ordinal()/13;
-        g.drawImage(cardImage, (int) (x-cardW/2*cardSize*flipX), (int) (y-cardH/2*cardSize*flipY), (int) (x+cardW/2*cardSize*flipX), (int) (y+cardH/2*cardSize*flipY), thisX*cardW, thisY*cardH,  thisX*cardW+cardW, thisY*cardH+cardH, this);
+
+        g.drawImage(cardImage, (int) (x-cardW/2*cardSize*Math.abs(flipX)), (int) (y-cardH/2*cardSize*Math.abs(flipY)), (int) (x+cardW/2*cardSize*Math.abs(flipX)), (int) (y+cardH/2*cardSize*Math.abs(flipY)), thisX*cardW, thisY*cardH,  thisX*cardW+cardW, thisY*cardH+cardH, this);
     }
     public void drawBackground(Graphics g){
         int tableW = (int) (getWidth()*0.6);
@@ -123,6 +134,13 @@ public class TableComponent extends JPanel {
             AnimInfo element = animList.get(i);
             long endTime = element.getEndTime();
             if (endTime <= time) {
+                int entityId = element.getEntityId();
+                int cardId = element.getCardId();
+                if (cardId != -10) {
+                    PlayerInfo playerInfo = players.get(entityId);
+                    DataTypes.CardType cardType = element.getCard();
+                    playerInfo.setCard(cardId, cardType);
+                }
                 animList.remove(i);
                 i--;
             }else if (element.getStartTime() <= time){
@@ -148,9 +166,46 @@ public class TableComponent extends JPanel {
                     setImage = cardBack;
                     isShown = false;
                 }
-                drawCard((int) (startX+(endX-startX)*progress), (int) (startY+(endY-startY)*progress), g, animList.get(i).card, setImage, (float) progressSize,isShown);
+                System.out.println("prog"+progress+"progF"+progressFlip+"progS"+progressSize);
+                drawCard((int) (startX+(endX-startX)*progress), (int) (startY+(endY-startY)*progress), g, animList.get(i).card, setImage, (float) (progressSize*getHeight()/450), isShown, (float) progressFlip);
             }
         }
     }
 
+//utility functions
+    public int getPosX(int entityId, int cardId){
+        if (entityId == -1) {
+            float size = sizeVar*getHeight()/3000;
+            return (int) (getWidth()/2+size*(2.5-cardId)*cardW);
+        }else {
+            float size = sizeVar*getHeight()/2000;
+            float eSize = (float) (size*(0.75-players.size()*0.02));
+            int offset;
+            if (entityId == 0) {
+                offset = (int) (-cardW*size/2+cardW*size*cardId);
+            }else {
+                offset = (int) (-cardW*eSize/2+cardW*eSize*cardId);
+            }
+            float angle = (float) (Math.PI*2/(players.size()));
+            return (int) (-Math.sin(angle*entityId)*getWidth()/2*radius+getWidth()/2+offset);
+        }
+    }
+    public int getPosY(int entityId, int cardId){
+        if (entityId == -1) {
+            return getHeight()/2;
+        }else {
+            float angle = (float) (Math.PI*2/(players.size()));
+            return (int) (Math.cos(angle*entityId)*getHeight()/2*radius+getHeight()/2);
+        }
+    }
+    public void giveCard(int startEntityId, int endEntityId, int startCardId, int endCardId, DataTypes.CardType cardType){
+
+        animList.add(new AnimInfo(this.getPosX(startEntityId,startCardId), this.getPosY(startEntityId,startCardId),this.getPosX(endEntityId,endCardId), this.getPosY(endEntityId,endCardId), 0, 1000, cardType, -1f,1f,  0.15f,0.15f, endEntityId, endCardId));
+    }
+    public void takeCard(int startEntityId, int endEntityId, int startCardId, int endCardId){
+        PlayerInfo playerInfo = players.get(endEntityId);
+        DataTypes.CardType card = playerInfo.getCard(0);
+        animList.add(new AnimInfo( this.getPosX(endEntityId,endCardId), this.getPosY(endEntityId,endCardId),this.getPosX(startEntityId,startCardId), this.getPosY(startEntityId,startCardId), 0, 1000, card, 1f,-1f,  0.15f,0.15f, endEntityId));
+        playerInfo.removeCard(0);
+    }
 }
