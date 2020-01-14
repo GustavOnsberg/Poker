@@ -1,5 +1,6 @@
 package server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
@@ -21,6 +22,17 @@ public class NonGameConnectionsHandler implements Runnable{
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+                else if(System.currentTimeMillis() - Server.connectionHandlers.get(i).lastHeatBeat > 60000){
+                    try {
+                        long removedId = Server.connectionHandlers.get(i).connectionId;
+                        Server.connectionHandlers.get(i).socket.close();
+                        Server.connectionHandlers.remove(i);
+                        System.out.println("NGCH >Connection with id "+removedId+" has benn removed due to missing heartbeat");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    i--;
                 }
             }
 
@@ -87,6 +99,9 @@ public class NonGameConnectionsHandler implements Runnable{
                             gamesSend++;
                         }
                     }
+                    break;
+                case "hb":
+                    Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).lastHeatBeat = System.currentTimeMillis();
                     break;
             }
         }

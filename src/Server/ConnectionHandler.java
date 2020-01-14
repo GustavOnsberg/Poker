@@ -14,6 +14,8 @@ public class ConnectionHandler{
 
     public long connectionId = 0;
 
+    public long lastHeatBeat = System.currentTimeMillis();
+
     public BlockingQueue queue = new ArrayBlockingQueue(64);
 
     public ConnectionHandler(Socket newSocket, long connectionId) throws IOException {
