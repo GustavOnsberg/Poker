@@ -2,8 +2,6 @@ package server;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.BlockingQueue;
 
 public class GameSession implements Runnable {
 
@@ -18,6 +16,10 @@ public class GameSession implements Runnable {
     int dealer = 0;
     int smallBlind = 0;
     int bigBlind = 0;
+    int turn = 0;
+    boolean limit = false;
+    int pot = 0;
+    int currentBet = 0;
 
     GameLogic gameLogic = new GameLogic();
 
@@ -66,6 +68,7 @@ public class GameSession implements Runnable {
                 }
                 distributeButton(0);
                 dealCards();
+                gameState = GameState.InProgress;
             }
 
 
@@ -104,6 +107,12 @@ public class GameSession implements Runnable {
                         }
                     }catch (Exception e){}
                     break;
+                case "hb":
+                    Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0]), connectionHandlers).lastHeatBeat = System.currentTimeMillis();
+                    break;
+                case "command":
+                    command(input);
+                    break;
             }
         }
     }
@@ -133,5 +142,101 @@ public class GameSession implements Runnable {
         for(int i = 0; i < connectionHandlers.size(); i++){
             connectionHandlers.get(i).out.send(message);
         }
+    }
+
+    public void command(String command){
+        String[] inputArray = command.split(" ");
+        long gameOwner = connectionHandlers.get(0).connectionId;
+        long commander = Long.parseLong(inputArray[0]);
+                switch (inputArray[2]){
+            case "start":
+                if(commander == gameOwner)
+                    startGame();
+                break;
+        }
+    }
+
+    public boolean startGame(){
+        if(connectionHandlers.size() > 1){
+            gameState = GameState.Ready;
+            return true;
+        }
+        return false;
+    }
+
+    public void move(String move){
+        String[] inputArray = move.split(" ");
+        long mover = Long.parseLong(inputArray[0]);
+        if(mover == connectionHandlers.get(turn).connectionId){
+            switch (inputArray[2]){
+                case "fold":
+                    connectionHandlers.get(turn).playerState = PlayerState.Folded;
+                    pot+=connectionHandlers.get(turn).bet;
+                    connectionHandlers.get(turn).bet = 0;
+                    broadcast("game folded "+turn);
+                    connectionHandlers.get(turn).hasHadChanceToBet = true;
+                    nextTurn();
+                    break;
+                case "call":
+                    if(connectionHandlers.get(turn).money - (currentBet - connectionHandlers.get(turn).bet) > 0){
+                        connectionHandlers.get(turn).money -= currentBet - connectionHandlers.get(turn).bet;
+                        connectionHandlers.get(turn).bet = currentBet;
+                        broadcast("game call "+turn);
+                    }
+                    else{
+                        connectionHandlers.get(turn).bet += connectionHandlers.get(turn).money;
+                        connectionHandlers.get(turn).money = 0;
+                        connectionHandlers.get(turn).playerState = PlayerState.AllIn;
+                        broadcast("game allin "+turn);
+                    }
+                    connectionHandlers.get(turn).hasHadChanceToBet = true;
+                    nextTurn();
+                    break;
+                case "raise":
+                    int raiseAmmount = Integer.parseInt(inputArray[3]);
+                    if(connectionHandlers.get(turn).money - (currentBet - connectionHandlers.get(turn).bet + raiseAmmount) > 0){
+                        connectionHandlers.get(turn).money -= (currentBet - connectionHandlers.get(turn).bet) + raiseAmmount;
+                        connectionHandlers.get(turn).bet = currentBet + raiseAmmount;
+                        currentBet = connectionHandlers.get(turn).bet;
+                        broadcast("game raise "+turn+" "+currentBet);
+                    }
+                    else{
+                        connectionHandlers.get(turn).bet += connectionHandlers.get(turn).money;
+                        connectionHandlers.get(turn).money = 0;
+                        connectionHandlers.get(turn).playerState = PlayerState.AllIn;
+                        currentBet = connectionHandlers.get(turn).bet;
+                        broadcast("game allin "+turn+" "+currentBet);
+                    }
+                    nextTurn();
+                    break;
+            }
+        }
+    }
+
+    public void nextTurn(){
+        int startTurn = turn;
+        int currentTurnCheck = turn + 1;
+
+        while(true){
+            if(currentTurnCheck > connectionHandlers.size() - 1)
+                currentTurnCheck = 0;
+
+            if(startTurn == currentTurnCheck){
+                endRound(turn);
+            }
+            else if (connectionHandlers.get(turn).playerState == PlayerState.Playing){
+                turn = currentTurnCheck;
+                return;
+            }
+        }
+    }
+
+    public void endRound(int winner){
+        for(int i = 0; i < connectionHandlers.size(); i++){
+            pot+= connectionHandlers.get(i).bet;
+            connectionHandlers.get(i).bet=0;
+        }
+        connectionHandlers.get(winner).money+=pot;
+        pot = 0;
     }
 }
