@@ -29,6 +29,10 @@ public class Main {
 
         connection.out.send("Hi server");
 
+        Thread.sleep(1000);
+
+        connection.out.send("gg");
+
         while(true){
             if (System.currentTimeMillis() - lastHeatBest > 20000){
                 connection.out.send("hb");
@@ -69,11 +73,16 @@ public class Main {
                     game = new Game();
                     game.runningThis = new Thread(game);
                     game.runningThis.start();
+                    break;
                 case "chat":
                     try{
                         String senderName = "Connection "+inputArray[0];
                         game.window.chatArea.append("\n\n"+senderName+": "+input.substring(10));
                     }catch (Exception e){};
+                    break;
+                case "gs":
+                    menuWindow.addGame();
+                    break;
             }
         }catch(Exception e){
 

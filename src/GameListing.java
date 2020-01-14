@@ -42,6 +42,8 @@ public class GameListing extends JPanel implements ActionListener {
         add(btnJoin);
 
         setBackground(Color.YELLOW);
+
+        System.out.print("test test test");
     }
 
     @Override

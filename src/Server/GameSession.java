@@ -8,6 +8,7 @@ public class GameSession implements Runnable {
     private String name = "";
     private long sessionId;
     private String password = "";
+    private int maxPlayers = 8;
     public Thread runningThis;
 
 
@@ -48,6 +49,12 @@ public class GameSession implements Runnable {
     }
     public String getPassword() {
         return password;
+    }
+    public String getName() {
+        return name;
+    }
+    public int getMaxPlayers() {
+        return maxPlayers;
     }
 
     public void sessionDo(String input) throws Exception {

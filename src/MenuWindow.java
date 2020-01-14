@@ -39,6 +39,7 @@ public class MenuWindow extends JFrame implements ActionListener {
 
         joinPanel.add(gamePanel);
         gamePanel.setBounds(0,0,600,480);
+        //gamePanel.setLayout(new GridLayout(0,1));
 
         btnJoin.setBounds(500,530,100,30);
         btnJoin.addActionListener(this);
@@ -49,14 +50,6 @@ public class MenuWindow extends JFrame implements ActionListener {
 
 
         btnCreate.addActionListener(this);
-
-
-        for(int i = 0; i < 200; i++){
-            gameList.add(new GameListing("Testgame " + i,3,8,"Gustav", "jhrhg74h", this));
-            gameList.get(i).setBackground(Color.YELLOW);
-            gameList.get(i).setBounds(0,i*30,600,30);
-            gamePanel.add(gameList.get(i));
-        }
     }
 
 
@@ -83,5 +76,13 @@ public class MenuWindow extends JFrame implements ActionListener {
 
     public void createGame(String gameName, int maxPlayers, boolean isPublic){
 
+    }
+
+    public void addGame(){
+        System.out.println("test test test");
+        gameList.add(new GameListing("test game",3,8,"Gustav", "jhrhg74h", this));
+        gameList.get(gameList.size()-1).setBounds(0,30,600,30);
+        gamePanel.add(gameList.get(gameList.size()-1));
+        gamePanel.repaint();
     }
 }

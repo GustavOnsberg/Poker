@@ -23,6 +23,8 @@ public class AnimInfo {
         this.endFlipPos=endFlipPos;
         this.startSize=startSize;
         this.endSize=endSize;
+
+        System.out.println("Endtime1:" + this.endTime);
     }
     AnimInfo(int startX, int startY, int endX, int endY, long endTime, DataTypes.CardType card, float startFlipPos, float endFlipPos, float startSize, float endSize){
         new AnimInfo(startX, startY, endX, endY, System.currentTimeMillis(),  endTime, card,  startFlipPos,  endFlipPos,  startSize,  endSize);
@@ -37,10 +39,14 @@ public class AnimInfo {
             flipPos = 1;
         }
         new AnimInfo(startX, startY, endX, endY, startTime,  endTime, card,  flipPos,  flipPos,  startSize,  endSize);
+
+        System.out.println("Endtime2:" + this.endTime);
     }
     AnimInfo(int startX, int startY, int endX, int endY, long startTime, long endTime, DataTypes.CardType card, boolean front, float size){
 
         new AnimInfo( startX,  startY,  endX,  endY,  startTime,  endTime, card,  front,  size,  size);
+
+        System.out.println("Endtime3:" + this.endTime);
     }
 
 }
