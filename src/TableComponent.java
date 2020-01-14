@@ -51,10 +51,11 @@ public class TableComponent extends JPanel {
 //loop
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        drawBackground(g);
+        drawTable(g);
         drawPlayers(g);
         drawBoard(g, communityCards, sizeVar);
         drawAnim(animList, g);
+        drawGameButtons(g, 2, DataTypes.GameButton.Dealer);
         g.drawString(System.currentTimeMillis()+"",0,10);
     }
 
@@ -88,7 +89,9 @@ public class TableComponent extends JPanel {
             //cash + cash icon
             Font font = new Font("Verdana", Font.BOLD, (int) (12*eSize*5.5));
             g.setFont(font);
+            //cash
             g.drawString(cash+"",(int) (x-cardW*eSize+70*eSize), (int) (y+cardH*eSize/2+55*eSize));
+            //icon
             g.drawImage(coin, (int) (x-cardW*eSize), (int) (y+cardH*eSize/2),(int) (70*eSize),(int) (70*eSize), this);
         }
 
@@ -117,16 +120,9 @@ public class TableComponent extends JPanel {
 
         g.drawImage(cardImage, (int) (x-cardW/2*cardSize*Math.abs(flipX)), (int) (y-cardH/2*cardSize*Math.abs(flipY)), (int) (x+cardW/2*cardSize*Math.abs(flipX)), (int) (y+cardH/2*cardSize*Math.abs(flipY)), thisX*cardW, thisY*cardH,  thisX*cardW+cardW, thisY*cardH+cardH, this);
     }
-    public void drawBackground(Graphics g){
-        int tableW = (int) (getWidth()*0.6);
-        int tableH = (int) (getHeight()*0.6);
-        g.setColor(Color.getHSBColor(0.1f, 1, 0.6f));
-        g.fillOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(10));
-        g2.setColor(Color.getHSBColor(0.5f, 1, 0.6f));
-        g2.drawOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
-        g.setColor(Color.getHSBColor(0,1,0));
+    public void drawGameButtons(Graphics g, int playerNum, DataTypes.GameButton buttonType){
+        int size = getHeight()/25;
+        g.drawImage(coin, this.getPosX(playerNum, -1)-size/2, this.getPosY(playerNum, -1)-size/2,(int) (size),(int) (size), this);
     }
     public void drawAnim(ArrayList<AnimInfo> animList, Graphics g){
         long time = System.currentTimeMillis();
@@ -171,6 +167,17 @@ public class TableComponent extends JPanel {
             }
         }
     }
+    public void drawTable(Graphics g){
+        int tableW = (int) (getWidth()*0.6);
+        int tableH = (int) (getHeight()*0.6);
+        g.setColor(Color.getHSBColor(0.1f, 1, 0.6f));
+        g.fillOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setStroke(new BasicStroke(10));
+        g2.setColor(Color.getHSBColor(0.5f, 1, 0.6f));
+        g2.drawOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
+        g.setColor(Color.getHSBColor(0,1,0));
+    }
 
 //utility functions
     public int getPosX(int entityId, int cardId){
@@ -178,16 +185,23 @@ public class TableComponent extends JPanel {
             float size = sizeVar*getHeight()/3000;
             return (int) (getWidth()/2+size*(2.5-cardId)*cardW);
         }else {
+
             float size = sizeVar*getHeight()/2000;
             float eSize = (float) (size*(0.75-players.size()*0.02));
-            int offset;
-            if (entityId == 0) {
-                offset = (int) (-cardW*size/2+cardW*size*cardId);
-            }else {
-                offset = (int) (-cardW*eSize/2+cardW*eSize*cardId);
-            }
             float angle = (float) (Math.PI*2/(players.size()));
-            return (int) (-Math.sin(angle*entityId)*getWidth()/2*radius+getWidth()/2+offset);
+
+            if (cardId == -1) {
+                return (int) (-Math.sin(angle*entityId)*getWidth()/2*radius*0.7+getWidth()/2);
+            }else {
+                int offset;
+                if (entityId == 0) {
+                    offset = (int) (-cardW*size/2+cardW*size*cardId);
+                }else {
+                    offset = (int) (-cardW*eSize/2+cardW*eSize*cardId);
+                }
+
+                return (int) (-Math.sin(angle*entityId)*getWidth()/2*radius+getWidth()/2+offset);
+            }
         }
     }
     public int getPosY(int entityId, int cardId){
@@ -195,6 +209,9 @@ public class TableComponent extends JPanel {
             return getHeight()/2;
         }else {
             float angle = (float) (Math.PI*2/(players.size()));
+            if (cardId == -1) {
+                return (int) (Math.cos(angle*entityId)*getHeight()/2*radius*0.7+getHeight()/2);
+            }
             return (int) (Math.cos(angle*entityId)*getHeight()/2*radius+getHeight()/2);
         }
     }

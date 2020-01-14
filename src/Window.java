@@ -172,12 +172,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
             Main.connection.out.send("chat "+chatInput.getText());
         }
         else if(actionEvent.getSource().equals(btnSettingsDeck)){
-            int startEntityId = -1;
-            int endEntityId = 4;
-            int startCardId = 0;
-            int endCardId = 0;
-            tableComponent.giveCard(startEntityId,endEntityId,startCardId,endCardId, DataTypes.CardType.getRandomCard());
-            tableComponent.takeCard(startEntityId,endEntityId,startCardId,endCardId);
+
         }
     }
 
@@ -237,7 +232,4 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
                 btnRaise.setText("ALL IN");
         }
     }
-
-
-
 }
