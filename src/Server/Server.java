@@ -61,13 +61,12 @@ public class Server {
             if (lastId < id){
                 lastCheck+=lastJump;
                 lastId = connHandlers.get(lastCheck).connectionId;
-                lastJump/=2;
             }
-            else if(lastId > id){
+            if(lastId > id){
                 lastCheck-=lastJump;
                 lastId = connHandlers.get(lastCheck).connectionId;
-                lastJump/=2;
             }
+            lastJump/=2;
 
             if(lastId == id){
                 return connHandlers.get(lastCheck);

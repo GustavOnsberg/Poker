@@ -226,6 +226,7 @@ public class GameSession implements Runnable {
             }
             else if (connectionHandlers.get(turn).playerState == PlayerState.Playing){
                 turn = currentTurnCheck;
+                broadcast("game turn "+turn);
                 return;
             }
         }
