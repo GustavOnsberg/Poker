@@ -169,7 +169,16 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
             Main.connection.out.send("leave");
         }
         else if(actionEvent.getSource().equals(btnChatSend)){
-            Main.connection.out.send("chat "+chatInput.getText());
+            if(chatInput.getText().length() > 0){
+                if(chatInput.getText().charAt(0) == '/') {
+                    Main.connection.out.send("command " + chatInput.getText().substring(1));
+                    chatArea.append("\n" + chatInput.getText());
+                }
+                else
+                    Main.connection.out.send("chat "+chatInput.getText());
+                chatInput.setText("");
+            }
+
         }
         else if(actionEvent.getSource().equals(btnSettingsDeck)){
 

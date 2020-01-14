@@ -12,8 +12,6 @@ public class GameLogic {
         createDeck();
     }
 
-
-
     public void createDeck(){
         deck.clear();
         for(int i = 0; i < 52; i++){

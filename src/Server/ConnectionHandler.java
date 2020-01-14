@@ -18,6 +18,8 @@ public class ConnectionHandler{
     int money = 10000;
     int card0 = 53;
     int card1 = 53;
+    int bet = 0;
+    boolean hasHadChanceToBet = false;
 
     public ConnectionHandler(Socket newSocket, long connectionId) throws IOException {
         socket = newSocket;
@@ -31,5 +33,6 @@ public class ConnectionHandler{
         in.runningThis.start();
 
         out = new ConnectionOut(this, socket);
+        out.connectionId = connectionId;
     }
 }
