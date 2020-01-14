@@ -22,9 +22,8 @@ public class TableComponent extends JPanel {
         cardShown = new boolean[12];
         cardShown[0] = true;
         //test part________________________________________________________________________________________________________________________________________________--
-        animList.add(new AnimInfo(getWidth()/2, getHeight()/2, getWidth(), getHeight(), 10, 10000, DataTypes.CardType.S13, true, 1));
+
         for (int i = 0; i < 6; i++) {
-            cardShown[i] = true;
             players.add(new PlayerInfo(DataTypes.CardType.H4, DataTypes.CardType.H2,500));
 
         }
@@ -122,24 +121,24 @@ public class TableComponent extends JPanel {
         long time = System.currentTimeMillis();
         for (int i = 0; i < animList.size(); i++) {
             AnimInfo element = animList.get(i);
-            long endTime = element.endTime;
+            long endTime = element.getEndTime();
             if (endTime <= time) {
                 animList.remove(i);
                 i--;
-            }else if (animList.get(i).startTime >= time){
-                long startT = element.startTime;
-                long endT = element.endTime;
-                int startX = element.startX;
-                int endX = element.endX;
-                int startY = element.startY;
-                int endY = element.endY;
-                float startF = element.startFlipPos;
-                float endF = element.endFlipPos;
-                float startS = element.startSize;
-                float endS = element.endSize;
-                float progress = (time-startT)/(endT-startT);
-                float progressFlip = startF+(endF-startF)*progress;
-                float progressSize = startS+(endS-startS)*progress;
+            }else if (element.getStartTime() <= time){
+                int startX = element.getStartX();
+                int endX = element.getEndX();
+                int startY = element.getStartY();
+                int endY = element.getEndY();
+                long startT = element.getStartTime();
+                long endT = element.getEndTime();
+                float startF = element.getStartFlipPos();
+                float endF = element.getEndFlipPos();
+                float startS = element.getStartSize();
+                float endS = element.getEndSize();
+                double progress = (double) (time-startT)/(double) (endT-startT);
+                double progressFlip = startF+(endF-startF)*progress;
+                double progressSize = startS+(endS-startS)*progress;
                 Image setImage;
                 boolean isShown;
                 if (progressFlip>0) {
@@ -149,7 +148,7 @@ public class TableComponent extends JPanel {
                     setImage = cardBack;
                     isShown = false;
                 }
-                drawCard((int) (startX+(endX-startX)*progress), (int) (startY+(endY-startY)*progress), g, animList.get(i).card, setImage, progressSize,isShown);
+                drawCard((int) (startX+(endX-startX)*progress), (int) (startY+(endY-startY)*progress), g, animList.get(i).card, setImage, (float) progressSize,isShown);
             }
         }
     }

@@ -171,6 +171,9 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         else if(actionEvent.getSource().equals(btnChatSend)){
             Main.connection.out.send("chat "+chatInput.getText());
         }
+        else if(actionEvent.getSource().equals(btnSettingsDeck)){
+            tableComponent.animList.add(new AnimInfo(0, 0, getWidth()/2, getHeight()/2, 0, 1000, DataTypes.CardType.getRandomCard(), 1,-1,  0.1f,1));
+        }
     }
 
     @Override
