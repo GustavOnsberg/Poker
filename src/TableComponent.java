@@ -22,7 +22,7 @@ public class TableComponent extends JPanel {
         cardShown = new boolean[12];
         cardShown[0] = true;
         //test part________________________________________________________________________________________________________________________________________________--
-        animList.add(new AnimInfo(getWidth()/2, getHeight()/2, getWidth(), getHeight(), 1000, 10000, DataTypes.CardType.S13, true, 1));
+        animList.add(new AnimInfo(getWidth()/2, getHeight()/2, getWidth(), getHeight(), 10, 10000, DataTypes.CardType.S13, true, 1));
         for (int i = 0; i < 6; i++) {
             cardShown[i] = true;
             players.add(new PlayerInfo(DataTypes.CardType.H4, DataTypes.CardType.H2,500));
