@@ -183,8 +183,8 @@ public class GameSession implements Runnable {
             distributeButton(dealer + 1);
             gameState = GameState.Ready;
             turn = 1;
-            move("0 move bet "+smallBlindBet);
-            move("0 move bet "+smallBlindBet*2);
+            move("0 move raise "+smallBlindBet);
+            move("0 move raise "+smallBlindBet);
             return true;
         }
         return false;
