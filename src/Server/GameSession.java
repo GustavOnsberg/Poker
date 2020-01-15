@@ -20,6 +20,10 @@ public class GameSession implements Runnable {
     boolean limit = false;
     int pot = 0;
     int currentBet = 0;
+    int peopleAtTable = 0;
+
+    ArrayList<Integer> pots = new ArrayList<Integer>();
+    ArrayList<Integer> potLimits = new ArrayList<Integer>();
 
     GameLogic gameLogic = new GameLogic();
 
@@ -56,6 +60,8 @@ public class GameSession implements Runnable {
                 }
             }
 
+            if(peopleAtTable != connectionHandlers.size())
+                sendPlaceAtTable();
 
 
 
@@ -214,6 +220,22 @@ public class GameSession implements Runnable {
     }
 
     public void nextTurn(){
+        boolean shouldEndBettingRound = true;
+        for(int i = 0; i < connectionHandlers.size(); i++){
+            shouldEndBettingRound = shouldEndBettingRound && connectionHandlers.get(i).hasHadChanceToBet;
+            if(connectionHandlers.get(i).playerState == PlayerState.Playing){
+                for(int j = 0; j < connectionHandlers.size(); j++){
+                    if(connectionHandlers.get(j).playerState == PlayerState.Playing){
+                        shouldEndBettingRound = shouldEndBettingRound && (connectionHandlers.get(i).bet == connectionHandlers.get(j).bet);
+                    }
+                }
+            }
+        }
+        if(shouldEndBettingRound){
+            endBettingRound();
+        }
+
+
         int startTurn = turn;
         int currentTurnCheck = turn + 1;
 
@@ -232,6 +254,10 @@ public class GameSession implements Runnable {
         }
     }
 
+    public void endBettingRound(){
+
+    }
+
     public void endRound(int winner){
         for(int i = 0; i < connectionHandlers.size(); i++){
             pot+= connectionHandlers.get(i).bet;
@@ -239,5 +265,11 @@ public class GameSession implements Runnable {
         }
         connectionHandlers.get(winner).money+=pot;
         pot = 0;
+    }
+
+    public void sendPlaceAtTable(){
+        for(int i = 0; i < connectionHandlers.size(); i++){
+            connectionHandlers.get(i).out.send("setup place "+i+" "+(connectionHandlers.size()));
+        }
     }
 }

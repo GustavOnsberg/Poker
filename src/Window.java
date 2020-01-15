@@ -181,7 +181,14 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
         }
         else if(actionEvent.getSource().equals(btnSettingsDeck)){
+            int startEntity = -1;
+            int startCard = 0;
 
+            int endEntity = -1;
+            int endCard =1;
+
+            tableComponent.takeCard(startEntity, endEntity, startCard, endCard,false);
+            tableComponent.giveCard(startEntity, endEntity, startCard, endCard, false, DataTypes.CardType.getRandomCard());
         }
     }
 
