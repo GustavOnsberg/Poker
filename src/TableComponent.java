@@ -59,9 +59,7 @@ public class TableComponent extends JPanel {
 
 //loop
     public void paintComponent(Graphics g){
-        for (int i = 0; i < Main.game.players.size(); i++) {
-
-        }
+        checkPlayers(players, Main.game.players);
         super.paintComponent(g);
         drawTable(g);
         drawPlayers(g);
@@ -202,6 +200,38 @@ public class TableComponent extends JPanel {
     }
 
 //utility functions
+    public void checkPlayers(ArrayList<PlayerInfo> playersT, ArrayList<PlayerInfo> playersG){
+        int place = Main.game.placeAtTable;
+        int numOfPlayers = Main.game.peopleAtTable;
+        for (int i = 0; i < Math.abs(numOfPlayers-playersT.size()); i++) {
+            if (numOfPlayers > playersT.size()) {
+                playersT.add(new PlayerInfo());
+            }else if(numOfPlayers < playersT.size()){
+                playersT.remove(numOfPlayers);
+            }
+        }
+        for (int i = place; i < numOfPlayers+place; i++) {
+            if (Main.game.) {
+
+            }else {
+                if (place+i > numOfPlayers) {
+                    if (playersG.get(place+i-numOfPlayers) != playersT.get(i)) {
+                        giveCard( -1, place+i, 0, 0, false, playersG.get(i).card0);
+                        giveCard( -1, place+i, 0, 1, false, playersG.get(i).card1);
+                        playersT.get(i-numOfPlayers).setCash(playersG.get(place+i-numOfPlayers).getCash());
+                    }
+                }else if (place+i == place) {
+                    giveCard( -1, place+i, 0, 0, true, cards[Main.game.card0]);
+                    giveCard( -1, place+i, 0, 1, true, cards[Main.game.card1]);
+                    playersT.get(i).setCash(playersG.get(place+i).getCash());
+                }else if (playersG.get(place+i) != playersT.get(i)) {
+                    giveCard( -1, place+i, 0, 0, false, playersG.get(i).card0);
+                    giveCard( -1, place+i, 0, 1, false, playersG.get(i).card1);
+                    playersT.get(i).setCash(playersG.get(place+i).getCash());
+                }
+            }
+        }
+    }
     public int getPosX(int entityId, int cardId){
         if (entityId < 0) {
             float size = sizeVar*getHeight()/3000;
