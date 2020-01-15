@@ -60,8 +60,10 @@ public class GameSession implements Runnable {
                 }
             }
 
-            if(peopleAtTable != connectionHandlers.size())
+            if(peopleAtTable != connectionHandlers.size()){
                 sendPlaceAtTable();
+            }
+
 
 
 
