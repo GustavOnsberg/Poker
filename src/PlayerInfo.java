@@ -8,6 +8,11 @@ public class PlayerInfo {
         this.card1 = card1;
         this.cash = cash;
     }
+    PlayerInfo(){
+        this.card0 = DataTypes.CardType.none;
+        this.card1 = DataTypes.CardType.none;
+        this.cash = 0;
+    }
     public void setCard(int cardId, DataTypes.CardType card){
         if (cardId == 0) {
             this.card0 = card;

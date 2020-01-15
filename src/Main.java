@@ -97,6 +97,15 @@ public class Main {
                     else if(inputArray[2].equals("place")){
                         game.placeAtTable = Integer.parseInt(inputArray[4]);
                         game.peopleAtTable = Integer.parseInt(inputArray[5]);
+                        game.players.clear();
+                        for(int i = 0;i < game.peopleAtTable; i++){
+                            game.players.add(new PlayerInfo());
+                        }
+                    }
+                    break;
+                case "info":
+                    if(inputArray[2].equals("money")){
+                        game.players.get(Integer.parseInt(inputArray[3])).cash = Integer.parseInt(inputArray[4]);
                     }
                     break;
             }

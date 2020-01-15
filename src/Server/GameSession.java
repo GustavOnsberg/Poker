@@ -275,5 +275,12 @@ public class GameSession implements Runnable {
             connectionHandlers.get(i).out.send("setup place "+i+" "+(connectionHandlers.size()));
         }
         peopleAtTable = connectionHandlers.size();
+        sendMoneyInfo();
+    }
+
+    public void sendMoneyInfo(){
+        for(int i = 0; i < connectionHandlers.size(); i++){
+            broadcast("info money "+i+" "+connectionHandlers.get(i).money);
+        }
     }
 }
