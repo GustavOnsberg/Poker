@@ -22,8 +22,8 @@ public class Main {
 
 
 
-        //socket = new Socket("82.211.202.61",33201); //Default IP: 82.211.202.61
-        socket = new Socket("localhost",33201); //Default IP: 82.211.202.61
+        socket = new Socket("82.211.202.61",33201); //Default IP: 82.211.202.61
+        //socket = new Socket("localhost",33201); //Default IP: 82.211.202.61
         connection = new ConnectionHandler(socket,0);
         queue = connection.in.queue;
 
