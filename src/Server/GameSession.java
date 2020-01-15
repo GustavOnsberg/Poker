@@ -53,6 +53,7 @@ public class GameSession implements Runnable {
                         connectionHandlers.get(i).socket.close();
                         connectionHandlers.remove(i);
                         System.out.println("Game Session "+sessionId+" >Connection with id "+removedId+" has benn removed due to missing heartbeat");
+                        sendPlaceAtTable();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -60,8 +61,10 @@ public class GameSession implements Runnable {
                 }
             }
 
-            if(peopleAtTable != connectionHandlers.size())
+            if(peopleAtTable != connectionHandlers.size()){
                 sendPlaceAtTable();
+            }
+
 
 
 
@@ -270,6 +273,14 @@ public class GameSession implements Runnable {
     public void sendPlaceAtTable(){
         for(int i = 0; i < connectionHandlers.size(); i++){
             connectionHandlers.get(i).out.send("setup place "+i+" "+(connectionHandlers.size()));
+        }
+        peopleAtTable = connectionHandlers.size();
+        sendMoneyInfo();
+    }
+
+    public void sendMoneyInfo(){
+        for(int i = 0; i < connectionHandlers.size(); i++){
+            broadcast("info money "+i+" "+connectionHandlers.get(i).money);
         }
     }
 }
