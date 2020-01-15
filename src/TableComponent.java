@@ -202,9 +202,10 @@ public class TableComponent extends JPanel {
 //utility functions
     public void checkPlayers(ArrayList<PlayerInfo> playersT, ArrayList<PlayerInfo> playersG){
         boolean notDealt = true;
-        System.out.println(Main.game.card0+"");
         int place = Main.game.placeAtTable;
+
         int numOfPlayers = Main.game.peopleAtTable;
+        System.out.println(Main.game.peopleAtTable+"+"+Main.game.placeAtTable);
         for (int i = 0; i < Math.abs(numOfPlayers-playersT.size()); i++) {
             if (numOfPlayers > playersT.size()) {
                 playersT.add(new PlayerInfo());
@@ -213,6 +214,7 @@ public class TableComponent extends JPanel {
             }
         }
         if (numOfPlayers > 1) {
+            System.out.println("notDealt"+notDealt);
             if(playersT.get(0).getCard(0) != cards[Main.game.card0] ){
                 giveCard(-1,0,0,0,true, cards[Main.game.card0]);
             }
@@ -225,6 +227,7 @@ public class TableComponent extends JPanel {
                     giveCard(-1, i, 0, 1, false, DataTypes.CardType.S1);
                 }
                 notDealt = false;
+                System.out.println("notDealt"+notDealt);
             }
         }
 
