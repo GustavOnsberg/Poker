@@ -18,6 +18,6 @@ public class DataTypes {
         }
     }
     public enum GameButton{
-        none, Dealer, SmallBlind, BigBlind
+        Dealer, SmallBlind, BigBlind, none
     }
 }
