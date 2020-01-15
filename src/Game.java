@@ -14,6 +14,9 @@ public class Game implements Runnable {
     int[] communityCards = {52,52,52,52,52};
     boolean showEnemyCards = false;
     ArrayList<PlayerInfo> players = new ArrayList<PlayerInfo>();
+    int dealer = -1;
+    int smallblind = -1;
+    int bigblind = -1;
 
 
 

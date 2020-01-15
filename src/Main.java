@@ -110,6 +110,15 @@ public class Main {
                             game.players.add(new PlayerInfo());
                         }
                     }
+                    else if(inputArray[2].equals("dealer")){
+                        game.dealer = Integer.parseInt(inputArray[3]);
+                    }
+                    else if(inputArray[2].equals("smallblind")){
+                        game.smallblind = Integer.parseInt(inputArray[3]);
+                    }
+                    else if(inputArray[2].equals("bigblind")){
+                        game.bigblind = Integer.parseInt(inputArray[3]);
+                    }
                     break;
                 case "info":
                     if(inputArray[2].equals("money")){
