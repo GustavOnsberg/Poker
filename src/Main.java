@@ -91,10 +91,16 @@ public class Main {
                     break;
                 case "setup":
                     if(inputArray[2].equals("deal")){
-                        if(inputArray[3].equals("card0"))
+                        if(inputArray[3].equals("card0")) {
                             game.card0 = Integer.parseInt(inputArray[4]);
-                        else if(inputArray[3].equals("card1"))
+                            if (game.card0 == -1)
+                                game.card0 = 53;
+                            }
+                        else if(inputArray[3].equals("card1")) {
                             game.card1 = Integer.parseInt(inputArray[4]);
+                            if (game.card0 == -1)
+                                game.card0 = 53;
+                        }
                     }
                     else if(inputArray[2].equals("place")){
                         game.placeAtTable = Integer.parseInt(inputArray[3]);
