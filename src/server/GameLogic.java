@@ -28,7 +28,15 @@ public class GameLogic {
 
 
 
-    public static int evaluateHand(ArrayList<Integer> hand) throws Exception {
+    public static int evaluateHand(int card0, int card1, int card2, int card3, int card4, int card5, int card6) throws Exception {
+        ArrayList<Integer> hand = new ArrayList<Integer>();
+        hand.add(card0);
+        hand.add(card1);
+        hand.add(card2);
+        hand.add(card3);
+        hand.add(card4);
+        hand.add(card5);
+        hand.add(card6);
         if(hand.size() != 7)
             throw new Exception("Hand must hold 7 cards but had "+hand.size());
         Collections.sort(hand);

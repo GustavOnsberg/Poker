@@ -12,6 +12,7 @@ public class Game implements Runnable {
     int placeAtTable = -1;
     int peopleAtTable = 0;
     int[] communityCards = {-1,-1,-1,-1,-1};
+    boolean showEnemyCards = false;
     ArrayList<PlayerInfo> players = new ArrayList<PlayerInfo>();
 
 
