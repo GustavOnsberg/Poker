@@ -1,5 +1,5 @@
 package server;
 
 public enum PlayerState {
-    Out,Folded,AllIn,Playing;
+    Out,Folded,AllIn,AllInPayed,Playing;
 }
