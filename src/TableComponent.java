@@ -19,34 +19,36 @@ public class TableComponent extends JPanel {
     public float radius = 0.8f;
     public float sizeVar = 1f;
     public float animSize = 0.15f;
+    public DataTypes.CardType[] cards = DataTypes.CardType.values();
     public float angle;
     public int playerNum;
     boolean[] cardShown;
-    public ArrayList<PlayerInfo> players = new ArrayList<>();
     public DataTypes.CardType[] communityCards = new DataTypes.CardType[5];
+    public ArrayList<PlayerInfo> players = new ArrayList<>();
     public ArrayList<AnimInfo> animList = new ArrayList<>();
+    public Color[]  buttonColors = new  Color[3];
+    public String[] buttonStrings = new String[3];
     private GameLogic gameLogic = new GameLogic();
     public TableComponent(){
+        buttonColors[0] = Color.WHITE;
+        buttonStrings[0] = "D";
+        buttonColors[1] = Color.BLUE;
+        buttonStrings[1] = "S";
+        buttonColors[2] = Color.YELLOW;
+        buttonStrings[2] = "B";
         cardShown = new boolean[12];
         cardShown[0] = true;
         //test part________________________________________________________________________________________________________________________________________________--
 
-        for (int i = 0; i < 6; i++) {
-            cardShown[i] = true;
-            players.add(new PlayerInfo(DataTypes.CardType.none, DataTypes.CardType.none,500));
-
-        }
         for (int i = 0; i < communityCards.length; i++) {
-            communityCards[i] = DataTypes.CardType.S1;
+            communityCards[i] = DataTypes.CardType.none;
         }
-        players.get(4).setCard(0, DataTypes.CardType.S1);
 
         //test part________________________________________________________________________________________________________________________________________________--
         try {
             cardFront = ImageIO.read(getClass().getResource("/resources/graphics/decks/fronts/deck_default.png"));
             cardBack = ImageIO.read(getClass().getResource("/resources/graphics/decks/backs/card_back_heavennade.png"));
             coin = ImageIO.read(getClass().getResource("/resources/graphics/icons/icon_coin.png"));
-            gameButtons = ImageIO.read(getClass().getResource("/resources/graphics/gameButtons.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,13 +59,12 @@ public class TableComponent extends JPanel {
 
 //loop
     public void paintComponent(Graphics g){
+        checkPlayers(players, Main.game.players);
         super.paintComponent(g);
         drawTable(g);
         drawPlayers(g);
         drawBoard(g, communityCards, sizeVar);
         drawAnim(animList, g);
-        drawGameButton(g, 2, DataTypes.GameButton.Dealer);
-        g.drawString(System.currentTimeMillis()+"",0,10);
     }
 
 //draw functions
@@ -127,9 +128,14 @@ public class TableComponent extends JPanel {
 
         g.drawImage(cardImage, (int) (x-cardW/2*cardSize*Math.abs(flipX)), (int) (y-cardH/2*cardSize*Math.abs(flipY)), (int) (x+cardW/2*cardSize*Math.abs(flipX)), (int) (y+cardH/2*cardSize*Math.abs(flipY)), thisX*cardW, thisY*cardH,  thisX*cardW+cardW, thisY*cardH+cardH, this);
     }
-    public void drawButton(int x, int y, Graphics g, DataTypes.GameButton gameButton ){
-        int size = getHeight()/450;
-        g.drawImage(gameButtons, x-20*size, y-20*size, x+20*size, y+20*size, gameButton.ordinal()*240, 0,gameButton.ordinal()*240+240,240,this);
+    public void drawButton(int x, int y, Graphics g, DataTypes.GameButton buttonType ){
+        float size = getHeight()/200f;
+        g.setColor(buttonColors[buttonType.ordinal()]);
+        g.fillOval((int) (x-10*size),(int) (y-10*size), (int) (20*size), (int) (20*size));
+        g.setColor(Color.BLACK);
+        Font font = new Font("Verdana", Font.BOLD, (int) (15*size));
+        g.setFont(font);
+        g.drawString(buttonStrings[buttonType.ordinal()],(int) (x-size*6), (int) (y+size*5));
     }
     public void drawGameButton(Graphics g, int playerNum, DataTypes.GameButton buttonType){
         drawButton(this.getPosX(playerNum, -1),this.getPosY(playerNum,-1),g, buttonType);
@@ -194,6 +200,38 @@ public class TableComponent extends JPanel {
     }
 
 //utility functions
+    public void checkPlayers(ArrayList<PlayerInfo> playersT, ArrayList<PlayerInfo> playersG){
+        int place = Main.game.placeAtTable;
+        int numOfPlayers = Main.game.peopleAtTable;
+        for (int i = 0; i < Math.abs(numOfPlayers-playersT.size()); i++) {
+            if (numOfPlayers > playersT.size()) {
+                playersT.add(new PlayerInfo());
+            }else if(numOfPlayers < playersT.size()){
+                playersT.remove(numOfPlayers);
+            }
+        }
+        for (int i = place; i < numOfPlayers+place; i++) {
+            if (Main.game.) {
+
+            }else {
+                if (place+i > numOfPlayers) {
+                    if (playersG.get(place+i-numOfPlayers) != playersT.get(i)) {
+                        giveCard( -1, place+i, 0, 0, false, playersG.get(i).card0);
+                        giveCard( -1, place+i, 0, 1, false, playersG.get(i).card1);
+                        playersT.get(i-numOfPlayers).setCash(playersG.get(place+i-numOfPlayers).getCash());
+                    }
+                }else if (place+i == place) {
+                    giveCard( -1, place+i, 0, 0, true, cards[Main.game.card0]);
+                    giveCard( -1, place+i, 0, 1, true, cards[Main.game.card1]);
+                    playersT.get(i).setCash(playersG.get(place+i).getCash());
+                }else if (playersG.get(place+i) != playersT.get(i)) {
+                    giveCard( -1, place+i, 0, 0, false, playersG.get(i).card0);
+                    giveCard( -1, place+i, 0, 1, false, playersG.get(i).card1);
+                    playersT.get(i).setCash(playersG.get(place+i).getCash());
+                }
+            }
+        }
+    }
     public int getPosX(int entityId, int cardId){
         if (entityId < 0) {
             float size = sizeVar*getHeight()/3000;

@@ -19,7 +19,9 @@ public class ConnectionHandler{
     int card0 = 53;
     int card1 = 53;
     int bet = 0;
+    int betThisRound = 0;
     boolean hasHadChanceToBet = false;
+    int handValue = 0;
 
     public ConnectionHandler(Socket newSocket, long connectionId) throws IOException {
         socket = newSocket;
