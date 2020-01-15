@@ -212,13 +212,22 @@ public class TableComponent extends JPanel {
                 playersT.remove(numOfPlayers);
             }
         }
-        if(playersT.get(0).getCard(0) != cards[Main.game.card0] && numOfPlayers > 1){
-            giveCard(-1,0,0,0,true, cards[Main.game.card0]);
+        if (numOfPlayers > 1) {
+            if(playersT.get(0).getCard(0) != cards[Main.game.card0] ){
+                giveCard(-1,0,0,0,true, cards[Main.game.card0]);
+            }
+            if(playersT.get(0).getCard(1) != cards[Main.game.card1] ){
+                giveCard(-1,0,0,1,true, cards[Main.game.card1]);
+            }
+            if(Main.game.card0 != -1 && Main.game.card1 != -1 && notDealt ){
+                for (int i = 0; i < numOfPlayers-1; i++) {
+                    giveCard(-1, i, 0, 0, false, DataTypes.CardType.S1);
+                    giveCard(-1, i, 0, 1, false, DataTypes.CardType.S1);
+                }
+                notDealt = false;
+            }
         }
-        if(playersT.get(0).getCard(1) != cards[Main.game.card1] && numOfPlayers > 1){
-            giveCard(-1,0,0,1,true, cards[Main.game.card1]);
-        }
-        
+
     }
     public int getPosX(int entityId, int cardId){
         if (entityId < 0) {
