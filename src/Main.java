@@ -21,7 +21,7 @@ public class Main {
     public static void main(String [] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, IOException, InterruptedException {
 
 
-        socket = new Socket("82.211.202.61",33201); //Default IP: 82.211.202.61
+        socket = new Socket("localhost",33201); //Default IP: 82.211.202.61
         connection = new ConnectionHandler(socket,0);
         queue = connection.in.queue;
 
@@ -70,11 +70,13 @@ public class Main {
                     game = new Game();
                     game.runningThis = new Thread(game);
                     game.runningThis.start();
+                    Main.connection.out.send("Hi game");
                     break;
                 case "gj":
                     game = new Game();
                     game.runningThis = new Thread(game);
                     game.runningThis.start();
+                    Main.connection.out.send("Hi game");
                     break;
                 case "chat":
                     try{
@@ -84,6 +86,18 @@ public class Main {
                     break;
                 case "gs":
                     menuWindow.addGame();
+                    break;
+                case "setup":
+                    if(inputArray[2].equals("deal")){
+                        if(inputArray[3].equals("card0"))
+                            game.card0 = Integer.parseInt(inputArray[4]);
+                        else if(inputArray[3].equals("card1"))
+                            game.card1 = Integer.parseInt(inputArray[4]);
+                    }
+                    else if(inputArray[2].equals("place")){
+                        game.placeAtTable = Integer.parseInt(inputArray[4]);
+                        game.peopleAtTable = Integer.parseInt(inputArray[5]);
+                    }
                     break;
             }
         }catch(Exception e){
