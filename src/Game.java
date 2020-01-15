@@ -6,6 +6,13 @@ public class Game implements Runnable {
     public Window window;
     Thread runningThis;
 
+    int card0 = -1;
+    int card1 = -1;
+    int placeAtTable = -1;
+    int peopleAtTable = 0;
+    int[] communityCards = {-1,-1,-1,-1,-1};
+
+
 
     public Game() throws IOException {
 
