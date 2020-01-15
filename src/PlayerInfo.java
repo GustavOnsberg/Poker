@@ -3,15 +3,15 @@ public class PlayerInfo {
     public DataTypes.CardType card1;
     public int cash;
 
-    PlayerInfo(DataTypes.CardType card0, DataTypes.CardType card1, int cash){
-        this.card0 = card0;
-        this.card1 = card1;
-        this.cash = cash;
-    }
     PlayerInfo(){
         this.card0 = DataTypes.CardType.none;
         this.card1 = DataTypes.CardType.none;
         this.cash = 0;
+    }
+    PlayerInfo(DataTypes.CardType card0, DataTypes.CardType card1, int cash){
+        this.card0 = card0;
+        this.card1 = card1;
+        this.cash = cash;
     }
     public void setCard(int cardId, DataTypes.CardType card){
         if (cardId == 0) {
