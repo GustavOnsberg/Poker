@@ -20,6 +20,9 @@ public class PlayerInfo {
             this.card1 = card;
         }
     }
+    public void setCash(int cash){
+        this.cash=cash;
+    }
     public void removeCard(int cardId){
         if (cardId == 0) {
             this.card0 = DataTypes.CardType.none;
