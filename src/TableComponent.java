@@ -201,6 +201,8 @@ public class TableComponent extends JPanel {
 
 //utility functions
     public void checkPlayers(ArrayList<PlayerInfo> playersT, ArrayList<PlayerInfo> playersG){
+        boolean notDealt = true;
+        System.out.println(Main.game.card0+"");
         int place = Main.game.placeAtTable;
         int numOfPlayers = Main.game.peopleAtTable;
         for (int i = 0; i < Math.abs(numOfPlayers-playersT.size()); i++) {
@@ -210,26 +212,18 @@ public class TableComponent extends JPanel {
                 playersT.remove(numOfPlayers);
             }
         }
-        for (int i = place; i < numOfPlayers+place; i++) {
-            if (Main.game.) {
-
-            }else {
-                if (place+i > numOfPlayers) {
-                    if (playersG.get(place+i-numOfPlayers) != playersT.get(i)) {
-                        giveCard( -1, place+i, 0, 0, false, playersG.get(i).card0);
-                        giveCard( -1, place+i, 0, 1, false, playersG.get(i).card1);
-                        playersT.get(i-numOfPlayers).setCash(playersG.get(place+i-numOfPlayers).getCash());
-                    }
-                }else if (place+i == place) {
-                    giveCard( -1, place+i, 0, 0, true, cards[Main.game.card0]);
-                    giveCard( -1, place+i, 0, 1, true, cards[Main.game.card1]);
-                    playersT.get(i).setCash(playersG.get(place+i).getCash());
-                }else if (playersG.get(place+i) != playersT.get(i)) {
-                    giveCard( -1, place+i, 0, 0, false, playersG.get(i).card0);
-                    giveCard( -1, place+i, 0, 1, false, playersG.get(i).card1);
-                    playersT.get(i).setCash(playersG.get(place+i).getCash());
-                }
+        if(playersT.get(0).getCard(0) != cards[Main.game.card0]){
+            giveCard(-1,0,0,0,true, cards[Main.game.card0]);
+        }
+        if(playersT.get(0).getCard(1) != cards[Main.game.card1]){
+            giveCard(-1,0,0,1,true, cards[Main.game.card1]);
+        }
+        if(Main.game.card0 != -1 && Main.game.card1 != -1 && notDealt){
+            for (int i = 0; i < numOfPlayers-1; i++) {
+                giveCard(-1, i, 0, 0, false, DataTypes.CardType.S1);
+                giveCard(-1, i, 0, 1, false, DataTypes.CardType.S1);
             }
+            notDealt = false;
         }
     }
     public int getPosX(int entityId, int cardId){
@@ -295,4 +289,36 @@ public class TableComponent extends JPanel {
         animList.add(new AnimInfo( this.getPosX(endEntityId,endCardId), this.getPosY(endEntityId,endCardId),this.getPosX(startEntityId,startCardId), this.getPosY(startEntityId,startCardId), 0, 1000, card, endFlip,-1f,  endSize, startSize, endEntityId));
 
     }
+    /*if (Main.game.showEnemyCards) {
+                if (place+i > numOfPlayers) {
+                    if (playersG.get(place+i-numOfPlayers) != playersT.get(i)) {
+                        giveCard( place+i, place+i, 0, 0, true, playersG.get(i).card0);
+                        giveCard( place+i, place+i, 0, 1, true, playersG.get(i).card1);
+                        playersT.get(i).setCash(playersG.get(place+i).getCash());
+                    }
+                }else if (place+i == place) {
+                    break;
+                }else if (playersG.get(place+i) != playersT.get(i)) {
+                    giveCard( place+i, place+i, 0, 0, true, playersG.get(i).card0);
+                    giveCard( place+i, place+i, 0, 1, true, playersG.get(i).card1);
+                    playersT.get(i).setCash(playersG.get(place+i).getCash());
+                }
+            }else {
+                if (playersT.get(i-place).getCard(0) != cards[Main.game.card0]) {
+                    if (place + i > numOfPlayers) {
+                        giveCard(-1, place + i, 0, 0, false, playersG.get(i).card0);
+                        giveCard(-1, place + i, 0, 1, false, playersG.get(i).card1);
+                        playersT.get(i - numOfPlayers).setCash(playersG.get(place + i - numOfPlayers).getCash());
+
+                    } else if (place + i == place) {
+                        giveCard(-1, place + i, 0, 0, true, cards[Main.game.card0]);
+                        giveCard(-1, place + i, 0, 1, true, cards[Main.game.card1]);
+                        playersT.get(i).setCash(playersG.get(place + i).getCash());
+                    } else {
+                        giveCard(-1, place + i, 0, 0, false, playersG.get(i).card0);
+                        giveCard(-1, place + i, 0, 1, false, playersG.get(i).card1);
+                        playersT.get(i).setCash(playersG.get(place + i).getCash());
+                    }
+                }
+            }*/
 }
