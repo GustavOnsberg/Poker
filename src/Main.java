@@ -22,8 +22,8 @@ public class Main {
 
 
 
-        //socket = new Socket("82.211.202.61",33201); //Default IP: 82.211.202.61
-        socket = new Socket("localhost",33201); //Default IP: 82.211.202.61
+        socket = new Socket("82.211.202.61",33201); //Default IP: 82.211.202.61
+        //socket = new Socket("localhost",33201); //Default IP: 82.211.202.61
         connection = new ConnectionHandler(socket,0);
         queue = connection.in.queue;
 
@@ -91,18 +91,33 @@ public class Main {
                     break;
                 case "setup":
                     if(inputArray[2].equals("deal")){
-                        if(inputArray[3].equals("card0"))
+                        if(inputArray[3].equals("card0")) {
                             game.card0 = Integer.parseInt(inputArray[4]);
-                        else if(inputArray[3].equals("card1"))
+                            if (game.card0 == -1)
+                                game.card0 = 52;
+                            }
+                        else if(inputArray[3].equals("card1")) {
                             game.card1 = Integer.parseInt(inputArray[4]);
+                            if (game.card0 == -1)
+                                game.card0 = 52;
+                        }
                     }
                     else if(inputArray[2].equals("place")){
-                        game.placeAtTable = Integer.parseInt(inputArray[4]);
-                        game.peopleAtTable = Integer.parseInt(inputArray[5]);
+                        game.placeAtTable = Integer.parseInt(inputArray[3]);
+                        game.peopleAtTable = Integer.parseInt(inputArray[4]);
                         game.players.clear();
                         for(int i = 0;i < game.peopleAtTable; i++){
                             game.players.add(new PlayerInfo());
                         }
+                    }
+                    else if(inputArray[2].equals("dealer")){
+                        game.dealer = Integer.parseInt(inputArray[3]);
+                    }
+                    else if(inputArray[2].equals("smallblind")){
+                        game.smallblind = Integer.parseInt(inputArray[3]);
+                    }
+                    else if(inputArray[2].equals("bigblind")){
+                        game.bigblind = Integer.parseInt(inputArray[3]);
                     }
                     break;
                 case "info":
