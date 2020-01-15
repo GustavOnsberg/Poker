@@ -207,7 +207,6 @@ public class TableComponent extends JPanel {
         int place = Main.game.placeAtTable;
 
         int numOfPlayers = Main.game.peopleAtTable;
-        System.out.println(Main.game.peopleAtTable+"+"+Main.game.placeAtTable);
         for (int i = 0; i < Math.abs(numOfPlayers-playersT.size()); i++) {
             if (numOfPlayers > playersT.size()) {
                 playersT.add(new PlayerInfo());
