@@ -59,7 +59,7 @@ public class TableComponent extends JPanel {
 
 //loop
     public void paintComponent(Graphics g){
-        for (int i = 0; i < Game.players.size(); i++) {
+        for (int i = 0; i < Main.game.players.size(); i++) {
 
         }
         super.paintComponent(g);
