@@ -94,12 +94,12 @@ public class Main {
                         if(inputArray[3].equals("card0")) {
                             game.card0 = Integer.parseInt(inputArray[4]);
                             if (game.card0 == -1)
-                                game.card0 = 53;
+                                game.card0 = 52;
                             }
                         else if(inputArray[3].equals("card1")) {
                             game.card1 = Integer.parseInt(inputArray[4]);
                             if (game.card0 == -1)
-                                game.card0 = 53;
+                                game.card0 = 52;
                         }
                     }
                     else if(inputArray[2].equals("place")){

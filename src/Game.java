@@ -7,11 +7,11 @@ public class Game implements Runnable {
     public Window window;
     Thread runningThis;
 
-    int card0 = 53;
-    int card1 = 53;
+    int card0 = 52;
+    int card1 = 52;
     int placeAtTable = -1;
     int peopleAtTable = 0;
-    int[] communityCards = {53,53,53,53,53};
+    int[] communityCards = {52,52,52,52,52};
     boolean showEnemyCards = false;
     ArrayList<PlayerInfo> players = new ArrayList<PlayerInfo>();
 
