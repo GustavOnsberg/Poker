@@ -216,14 +216,12 @@ public class TableComponent extends JPanel {
             }
         }
         if (numOfPlayers > 1 && Main.game.card0 != 52 && Main.game.card1 != 52 && notDealt) {
-            System.out.println("notDealt"+notDealt);
             giveCard(-1,0,0,0,true, cards[Main.game.card0]);
             giveCard(-1, 0, 0, 1, true, cards[Main.game.card1]);
             for (int i = 1; i < numOfPlayers; i++) {
                 giveCard(-1, i, 0, 0, false, DataTypes.CardType.S1);
                 giveCard(-1, i, 0, 1, false, DataTypes.CardType.S1);
             }
-            System.out.println("notDealt"+notDealt);
             notDealt = false;
         }
         if (Main.game.showEnemyCards && notShown) {
