@@ -13,7 +13,7 @@ public class GameSession implements Runnable {
 
     GameState gameState = GameState.Setup;
     RoundState roundState = RoundState.PreFlop;
-    int dealer = 0;
+    int dealer = -1;
     int smallBlind = 0;
     int bigBlind = 0;
     int turn = 0;
@@ -22,6 +22,8 @@ public class GameSession implements Runnable {
     int currentBet = 0;
     int peopleAtTable = 0;
     int[] communityCards = {-1,-1,-1,-1,-1};
+
+    int smallBlindBet = 10;
 
 
     GameLogic gameLogic = new GameLogic();
@@ -152,7 +154,7 @@ public class GameSession implements Runnable {
         }
     }
 
-    public void command(String command){
+    public void command(String command) throws Exception {
         String[] inputArray = command.split(" ");
         long gameOwner = connectionHandlers.get(0).connectionId;
         long commander = Long.parseLong(inputArray[0]);
@@ -176,9 +178,13 @@ public class GameSession implements Runnable {
         }
     }
 
-    public boolean startGame(){
+    public boolean startGame() throws Exception {
         if(connectionHandlers.size() > 1){
+            distributeButton(dealer + 1);
             gameState = GameState.Ready;
+            turn = 1;
+            move("0 move raise "+smallBlindBet);
+            move("0 move raise "+smallBlindBet);
             return true;
         }
         return false;
