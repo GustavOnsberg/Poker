@@ -211,18 +211,17 @@ public class TableComponent extends JPanel {
                     setImage = cardBack;
                     isShown = false;
                 }
-                System.out.println("prog"+progress+"progF"+progressFlip+"progS"+progressSize);
                 drawCard((int) (startX+(endX-startX)*progress), (int) (startY+(endY-startY)*progress), g, animList.get(i).card, setImage, (float) (progressSize*getHeight()/450), isShown, (float) progressFlip);
             }
         }
     }
     public void drawTable(Graphics g){
-        int tableW = (int) (getWidth()*0.6);
-        int tableH = (int) (getHeight()*0.6);
+        int tableW = (int) (getWidth()*0.5);
+        int tableH = (int) (getHeight()*0.5);
         g.setColor(Color.getHSBColor(0.3f, 1, 0.5f));
         g.fillOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
         Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(10));
+        g2.setStroke(new BasicStroke(getHeight()/100f));
         g2.setColor(Color.getHSBColor(0f, 0, 0f));
         g2.drawOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
         g.setColor(Color.getHSBColor(0,1,0));

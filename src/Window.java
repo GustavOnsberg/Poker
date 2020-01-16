@@ -161,7 +161,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
 
 
-    
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(btnSettingsFullscreen)){
