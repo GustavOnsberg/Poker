@@ -63,10 +63,11 @@ public class TableComponent extends JPanel {
 
 //loop
     public void paintComponent(Graphics g){
+        super.paintComponent(g);
         checkPlayers(players, Main.game.players);
         checkBoard();
         checkCash();
-        super.paintComponent(g);
+        drawTurn(g);
         drawTable(g);
         drawPot(g);
         drawPlayers(g);
@@ -125,6 +126,16 @@ public class TableComponent extends JPanel {
         g.setFont(font);
         String pot = "Current pot:"+Main.game.pot;
         g.drawString(pot, (int) (getWidth()/2-size*20*pot.length()), (int) ((getHeight()/2)*1.25));
+    }
+    public void drawTurn(Graphics g){
+        g.drawRoundRect(getPosX(Main.game.turn,0),getPosY(Main.game.turn,0),getX(Main.game.turn,1),getPosY(Main.game.turn,1),20,100);
+    }
+    public void drawBet(Graphics g){
+        float size = sizeVar*getHeight()/2000;
+        Font font = new Font("Verdana", Font.BOLD, (int) (66*size));
+        g.setFont(font);
+        String bet = "Current pot:"+Main.game.bet;
+        g.drawString(bet, (int) (getWidth()/2-size*20*pot.length()), (int) ((getHeight()/2)*1.25));
     }
     public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize, boolean isShown){
         drawCard(x, y, g, card, cardImage, cardSize,isShown, 1, 1);
