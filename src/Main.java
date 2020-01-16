@@ -146,6 +146,19 @@ public class Main {
                         }catch (Exception e){}
 
                     }
+                    else if (inputArray[2].equals("turn")) {
+                        int card0 = Integer.parseInt(inputArray[3]);
+                        int card1 = Integer.parseInt(inputArray[4]);
+                        if(card0 == -1)
+                            card0 = 52;
+                        if(card1 == -1)
+                            card0 = 52;
+                        game.players.get(Integer.parseInt(inputArray[2])).card0 = DataTypes.CardType.values()[card0];
+                        game.players.get(Integer.parseInt(inputArray[2])).card0 = DataTypes.CardType.values()[card1];
+                    }
+                    else if (inputArray[2].equals("showall")) {
+                        game.showEnemyCards = inputArray[3].equals("true");
+                    }
                     break;
             }
         }catch(Exception e){
