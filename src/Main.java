@@ -33,8 +33,6 @@ public class Main {
 
         connection.out.send("Hi server");
 
-        Thread.sleep(1000);
-
         connection.out.send("gg");
 
         while(true){
