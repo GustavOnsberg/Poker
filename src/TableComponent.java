@@ -32,7 +32,6 @@ public class TableComponent extends JPanel {
     public ArrayList<AnimInfo> animList = new ArrayList<>();
     public Color[]  buttonColors = new  Color[3];
     public String[] buttonStrings = new String[3];
-    private GameLogic gameLogic = new GameLogic();
     public TableComponent(){
         buttonColors[0] = Color.WHITE;
         buttonStrings[0] = "D";
