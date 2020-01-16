@@ -82,8 +82,8 @@ public class Main {
                     break;
                 case "chat":
                     try {
-                        String senderName = inputArray[0];
-                        game.window.chatArea.append("\n\n" + senderName + ": " + input.substring(10));
+                        String senderName = inputArray[2];
+                        game.window.chatArea.append("\n\n" + senderName + ": " + input.split("chat "+senderName)[1]);
                     } catch (Exception e) {
                     }
                     ;

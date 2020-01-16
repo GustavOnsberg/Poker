@@ -45,6 +45,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
     JPanel infoPanel = new JPanel();
     JLabel cashLabel = new JLabel("Cash: 346323");
+    JLabel betLabel = new JLabel("Bet: 3241");
     Font cashFont = new Font("Verdana", Font.BOLD, 18);
 
 
@@ -86,7 +87,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         gamePanel.add(betSlider);
         gamePanel.add(betSliderLabel);
         gamePanel.add(tableComponent);
-        gamePanel.setBackground(Color.GREEN);
+        gamePanel.setBackground(Color.getHSBColor(0.6667f,0.3f,0.4f));
         tableComponent.setBackground(null);
 
         sidePanel.setLayout(null);
@@ -138,7 +139,11 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         infoPanel.setLayout(null);
         cashLabel.setFont(cashFont);
         infoPanel.add(cashLabel);
-        cashLabel.setBounds(20,20,200,40);
+        cashLabel.setBounds(10,10,200,20);
+
+        betLabel.setFont(cashFont);
+        infoPanel.add(betLabel);
+        betLabel.setBounds(10,30,200,20);
 
         chatArea = new JTextArea("",5,50);
         chatArea.setLineWrap(true);
@@ -206,8 +211,10 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
             tableComponent.repaint();
             betSliderLabel.setText(betSliderLabel.getText());
             betSliderLabel.setBounds(betSliderLabel.getBounds());
-            if(Main.game.placeAtTable >= 0)
-                cashLabel.setText("Cash: "+Main.game.players.get(Main.game.placeAtTable).cash);
+            if(Main.game.placeAtTable >= 0) {
+                cashLabel.setText("Cash: " + Main.game.players.get(Main.game.placeAtTable).cash);
+                betLabel.setText("Bet: " + Main.game.players.get(Main.game.placeAtTable).bet);
+            }
 
             try {
                 Thread.sleep(10);
