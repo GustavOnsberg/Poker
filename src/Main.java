@@ -114,18 +114,21 @@ public class Main {
                             game.smallblind = Integer.parseInt(inputArray[3]);
                         } else if (inputArray[2].equals("bigblind")) {
                             game.bigblind = Integer.parseInt(inputArray[3]);
-                        } else if (inputArray[2].equals("community")) {
-                            game.communityCards[0] = Integer.parseInt(inputArray[3]);
-                            game.communityCards[1] = Integer.parseInt(inputArray[4]);
-                            game.communityCards[2] = Integer.parseInt(inputArray[5]);
-                            game.communityCards[3] = Integer.parseInt(inputArray[6]);
-                            game.communityCards[4] = Integer.parseInt(inputArray[7]);
                         }
                     }
                     break;
                 case "info":
                     if (inputArray[2].equals("money")) {
                         game.players.get(Integer.parseInt(inputArray[3])).cash = Integer.parseInt(inputArray[4]);
+                    }
+                    break;
+                case "game":
+                    if (inputArray[2].equals("community")) {
+                        game.communityCards[0] = Integer.parseInt(inputArray[3]);
+                        game.communityCards[1] = Integer.parseInt(inputArray[4]);
+                        game.communityCards[2] = Integer.parseInt(inputArray[5]);
+                        game.communityCards[3] = Integer.parseInt(inputArray[6]);
+                        game.communityCards[4] = Integer.parseInt(inputArray[7]);
                     }
                     break;
             }
