@@ -44,10 +44,16 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
     int settingsNum = 5;
 
     JPanel infoPanel = new JPanel();
+    JLabel cashLabel = new JLabel("Cash: 346323");
+    Font cashFont = new Font("Verdana", Font.BOLD, 18);
+
+
     JTextArea chatArea;
     JScrollPane chatScroll;
     JTextField chatInput = new JTextField();
     JButton btnChatSend = new JButton("Send");
+
+
 
 
     TableComponent tableComponent = new TableComponent();
@@ -127,7 +133,12 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         btnSettingsFullscreen.addActionListener(this);
         btnSettingsLeave.addActionListener(this);
 
-
+        sidePanel.add(infoPanel);
+        infoPanel.setBounds(0,80,400,200);
+        infoPanel.setLayout(null);
+        cashLabel.setFont(cashFont);
+        infoPanel.add(cashLabel);
+        cashLabel.setBounds(20,20,200,40);
 
         chatArea = new JTextArea("",5,50);
         chatArea.setLineWrap(true);
@@ -195,7 +206,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
             tableComponent.repaint();
             betSliderLabel.setText(betSliderLabel.getText());
             betSliderLabel.setBounds(betSliderLabel.getBounds());
-
+            cashLabel.setText("Cash: "+Main.game.players.get(Main.game.placeAtTable).cash);
 
             try {
                 Thread.sleep(10);
