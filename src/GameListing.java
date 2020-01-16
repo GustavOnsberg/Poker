@@ -8,8 +8,7 @@ public class GameListing extends JPanel implements ActionListener {
     String gameName;
     int players;
     int maxPlayers;
-    String hostName;
-    String gameCode;
+    long sessiopnId;
     MenuWindow menuWindow;
 
     JLabel labelName;
@@ -17,9 +16,12 @@ public class GameListing extends JPanel implements ActionListener {
     JButton btnInfo = new JButton("More info");
     JButton btnJoin = new JButton("Join game");
 
-    public GameListing(String gameName, int players, int maxPlayers, String hostName, String gameCode, MenuWindow menuWindow){
-        this.gameCode = gameCode;
+    public GameListing(String gameName, int players, int maxPlayers, long sessiopnId, MenuWindow menuWindow){
         this.menuWindow = menuWindow;
+        this.players = players;
+        this.maxPlayers = maxPlayers;
+        this.sessiopnId = sessiopnId;
+        this.gameName = gameName;
 
         setLayout(null);
 
@@ -38,22 +40,16 @@ public class GameListing extends JPanel implements ActionListener {
 
         add(labelName);
         add(labelPlayers);
-        add(btnInfo);
+        //add(btnInfo);
         add(btnJoin);
 
         setBackground(Color.YELLOW);
-
-        System.out.print("test test test");
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if(actionEvent.getSource().equals(btnInfo)){
-            menuWindow.gameCodeText.setText(gameCode);
+        if(actionEvent.getSource().equals(btnJoin)){
+            menuWindow.joinGame(sessiopnId);
         }
-        else if(actionEvent.getSource().equals(btnJoin)){
-            menuWindow.joinGame(gameCode);
-        }
-
     }
 }

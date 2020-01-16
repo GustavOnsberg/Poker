@@ -89,7 +89,7 @@ public class Main {
                     ;
                     break;
                 case "gs":
-                    menuWindow.addGame();
+                    menuWindow.addGame(inputArray[3],Integer.parseInt(inputArray[4]),Integer.parseInt(inputArray[5]),Long.parseLong(inputArray[2]));
                     break;
                 case "setup":
                     if (inputArray[2].equals("deal")) {

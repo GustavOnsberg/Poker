@@ -57,7 +57,9 @@ public class MenuWindow extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(btnJoin)){
-            Main.connection.out.send("join 1");
+            try{
+                joinGame(Long.parseLong(gameCodeText.getText()));
+            }catch(Exception e){}
         }
         else if(actionEvent.getSource().equals(btnCreate)){
             Main.connection.out.send("create AwesomeGame");
@@ -67,8 +69,9 @@ public class MenuWindow extends JFrame implements ActionListener {
 
 
 
-    public void joinGame(String gameCode){
-        System.out.println("Joining game: " + gameCode);
+    public void joinGame(long sessionId){
+        System.out.println("Joining game: " + sessionId);
+        Main.connection.out.send("join "+sessionId);
     }
 
 
@@ -78,10 +81,9 @@ public class MenuWindow extends JFrame implements ActionListener {
 
     }
 
-    public void addGame(){
-        System.out.println("test test test");
-        gameList.add(new GameListing("test game",3,8,"Gustav", "jhrhg74h", this));
-        gameList.get(gameList.size()-1).setBounds(0,30,600,30);
+    public void addGame(String gameName, int players, int maxPlayers, long sessionId){
+        gameList.add(new GameListing(gameName,players,maxPlayers,sessionId, this));
+        gameList.get(gameList.size()-1).setBounds(0,30*(gameList.size()-1),600,30);
         gamePanel.add(gameList.get(gameList.size()-1));
         gamePanel.repaint();
     }
