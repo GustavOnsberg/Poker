@@ -192,8 +192,10 @@ public class GameSession implements Runnable {
             turn = 1;
             long mover = connectionHandlers.get(turn).connectionId;
             move(mover+" move raise "+smallBlindBet);
+            Server.getConnectionHandlerFromId(mover, connectionHandlers).hasHadChanceToBet = false;
             mover = connectionHandlers.get(turn).connectionId;
             move(mover+" move raise "+smallBlindBet);
+            Server.getConnectionHandlerFromId(mover, connectionHandlers).hasHadChanceToBet = false;
             return true;
         }
         System.out.println("Game Session "+sessionId+" >Failed to start game");
