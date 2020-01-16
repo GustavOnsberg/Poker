@@ -102,7 +102,7 @@ public class TableComponent extends JPanel {
             drawCard((int) (x-cardW*eSize/2), y, g, card0, cardFront, eSize, isShown);
             drawCard((int) (x+cardW*eSize/2), y, g, card1, cardFront, eSize,isShown);
             //cash + cash icon
-            Font font = new Font("Verdana", Font.BOLD, (int) (12*eSize*5.5));
+            Font font = new Font("Verdana", Font.BOLD, (int) (66*eSize));
             g.setFont(font);
             //cash
             g.drawString(cash+"",(int) (x-cardW*eSize+70*eSize), (int) (y+cardH*eSize/2+55*eSize));
@@ -116,15 +116,15 @@ public class TableComponent extends JPanel {
         int x = (int) (getWidth()/2+size*2.5*cardW);
         drawCard(x, getHeight()/2, g, DataTypes.CardType.S1, cardBack, size, false);
         for (int i = 0; i < 5; i++) {
-            drawCard((int) (x-5*cardW*size+(i+1)*cardW*size), getHeight()/2, g, comCards[i], cardFront, size, true);
+            drawCard((int) (x-5*cardW*size+i*cardW*size), getHeight()/2, g, comCards[i], cardFront, size, true);
         }
     }
     public void drawPot(Graphics g){
         float size = sizeVar*getHeight()/2000;
-        Font font = new Font("Verdana", Font.BOLD, (int) (12*size*5.5));
+        Font font = new Font("Verdana", Font.BOLD, (int) (66*size));
         g.setFont(font);
         String pot = "Current pot:"+Main.game.pot;
-        g.drawString(pot, (int) (getWidth()/2-size*10*pot.length()), (int) ((getHeight()/2)*1.25));
+        g.drawString(pot, (int) (getWidth()/2-size*20*pot.length()), (int) ((getHeight()/2)*1.25));
     }
     public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize, boolean isShown){
         drawCard(x, y, g, card, cardImage, cardSize,isShown, 1, 1);
@@ -282,7 +282,7 @@ public class TableComponent extends JPanel {
                 return (int) (getWidth()/2+sizeVar*getHeight()/3000*2.5*cardW);
             }else {
                 float size = sizeVar * getHeight() / 3000;
-                return (int) (getWidth() / 2 - size * (2.5 + cardId) * cardW);
+                return (int) (getWidth() / 2 - size * (-1.5+(5-cardId)) * cardW);
             }
         }else {
 
