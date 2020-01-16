@@ -134,12 +134,30 @@ public class TableComponent extends JPanel {
         Font font = new Font("Verdana", Font.BOLD, (int) (66*eSize));
         g.setFont(font);
         for (int i = 1; i < players.size(); i++) {
+            int localTurn = i+Main.game.placeAtTable;
+            if (localTurn > players.size()-1) {
+                localTurn -= players.size();
+            }
             String bet = "Bet:"+Main.game.players.get(i).bet;
-            g.drawString(bet, (int) (getPosX(i,-2)-cardW*eSize), (int) (getPosY(i,-2)+cardH/2*eSize+130*eSize));
+            g.drawString(bet, (int) (getPosX(localTurn,-2)-cardW*eSize), (int) (getPosY(localTurn,-2)+cardH/2*eSize+130*eSize));
         }
     }
     public void drawTurn(Graphics g){
-        g.drawRoundRect(getPosX(Main.game.turn,0),getPosY(Main.game.turn,0),getPosX(Main.game.turn,1),getPosY(Main.game.turn,1),20,100);
+        int localTurn = Main.game.turn+Main.game.placeAtTable;
+        if (localTurn > players.size()-1) {
+            localTurn -= players.size();
+        }
+        float size = sizeVar*getHeight()/2000;
+        float eSize = (float) (size*(0.75-players.size()*0.02));
+
+        if (localTurn == 0) {
+            g.drawRoundRect((int) (getPosX(localTurn,0)-size*cardW), (int) (getPosY(localTurn,0)+size*cardH),(int) (size*cardW),(int) (size*cardH),20*getHeight()/450,20*getHeight()/450);
+        }else {
+            g.drawRoundRect(getPosX(localTurn,0),getPosY(localTurn,0),getPosX(localTurn,1),getPosY(localTurn,1),20*getHeight()/450,20*getHeight()/450);
+        }
+    }
+    public void drawHighlight(Graphics g, int playerNum){
+
     }
     public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize, boolean isShown){
         drawCard(x, y, g, card, cardImage, cardSize,isShown, 1, 1);
@@ -251,6 +269,10 @@ public class TableComponent extends JPanel {
             }
             giveCard(-1, 0, 0, 1, true,numOfPlayers*delay*2, cards[Main.game.card1]);
             notDealt = false;
+        }else if (numOfPlayers > 1 && Main.game.card0 == 52 && Main.game.card1 == 52 && !notDealt) {
+            for (int i = 0; i < players.size(); i++) {
+
+            }
         }
         if (Main.game.showEnemyCards && notShown) {
             for (int i = 1; i < numOfPlayers; i++) {
@@ -281,8 +303,12 @@ public class TableComponent extends JPanel {
     public void checkCash(){
         int numOfPlayers = Main.game.peopleAtTable;
             for (int i = 0; i < numOfPlayers; i++) {
+                int localTurn = i+Main.game.placeAtTable;
+                if (localTurn > players.size()-1) {
+                    localTurn -= players.size();
+                }
                 if (players.size() == numOfPlayers) {
-                    players.get(i).setCash(Main.game.players.get(i).getCash());
+                    players.get(localTurn).setCash(Main.game.players.get(localTurn).getCash());
                 }
 
 
