@@ -14,7 +14,7 @@ public class ConnectionHandler{
     public long lastHeatBeat = System.currentTimeMillis();
     public BlockingQueue queue = new ArrayBlockingQueue(64);
 
-    PlayerState playerState = PlayerState.Out;
+    PlayerState playerState = PlayerState.Folded;
     int money = 10000;
     int card0 = 53;
     int card1 = 53;

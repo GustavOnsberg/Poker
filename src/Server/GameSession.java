@@ -21,7 +21,7 @@ public class GameSession implements Runnable {
     int pot = 0;
     int currentBet = 0;
     int peopleAtTable = 0;
-    int[] communityCards = {-1,-1,-1,-1,-1};
+    int[] communityCards = {52,52,52,52,52};
 
     int smallBlindBet = 10;
 
@@ -123,6 +123,9 @@ public class GameSession implements Runnable {
                 case "command":
                     command(input);
                     break;
+                case "move":
+                    move(input);
+                    break;
             }
         }
     }
@@ -180,17 +183,25 @@ public class GameSession implements Runnable {
 
     public boolean startGame() throws Exception {
         if(connectionHandlers.size() > 1){
+            System.out.println("Game Session "+sessionId+" >Starting game");
             distributeButton(dealer + 1);
+            for(int i = 0; i < connectionHandlers.size(); i++){
+                connectionHandlers.get(i).playerState = PlayerState.Playing;
+            }
             gameState = GameState.Ready;
             turn = 1;
-            move("0 move raise "+smallBlindBet);
-            move("0 move raise "+smallBlindBet);
+            long mover = connectionHandlers.get(turn).connectionId;
+            move(mover+" move raise "+smallBlindBet);
+            mover = connectionHandlers.get(turn).connectionId;
+            move(mover+" move raise "+smallBlindBet);
             return true;
         }
+        System.out.println("Game Session "+sessionId+" >Failed to start game");
         return false;
     }
 
     public void move(String move) throws Exception {
+        System.out.println(move);
         String[] inputArray = move.split(" ");
         long mover = Long.parseLong(inputArray[0]);
         if(mover == connectionHandlers.get(turn).connectionId){
@@ -246,6 +257,7 @@ public class GameSession implements Runnable {
     }
 
     public void nextTurn() throws Exception {
+        System.out.println("Game Session "+sessionId+" >Next turn");
         boolean shouldEndBettingRound = true;
         for(int i = 0; i < connectionHandlers.size(); i++){
             shouldEndBettingRound = shouldEndBettingRound && connectionHandlers.get(i).hasHadChanceToBet;
@@ -258,6 +270,7 @@ public class GameSession implements Runnable {
             }
         }
         if(shouldEndBettingRound){
+            System.out.println("Game Session "+sessionId+" >Ending betting round: Everybody has placed bets");
             endBettingRound();
         }
 
@@ -266,17 +279,22 @@ public class GameSession implements Runnable {
         int currentTurnCheck = turn + 1;
 
         while(true){
-            if(currentTurnCheck > connectionHandlers.size() - 1)
+            if(currentTurnCheck > connectionHandlers.size() - 1) {
                 currentTurnCheck = 0;
+            }
 
             if(startTurn == currentTurnCheck){
+                System.out.println("Game Session "+sessionId+" >Ending betting round: Only one player left");
                 endBettingRound();
+                return;
             }
             else if (connectionHandlers.get(turn).playerState == PlayerState.Playing){
                 turn = currentTurnCheck;
+                System.out.println("Game Session "+sessionId+" >Turn is "+turn);
                 broadcast("game turn "+turn);
                 return;
             }
+            currentTurnCheck++;
         }
     }
 
