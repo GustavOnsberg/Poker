@@ -63,11 +63,11 @@ public class Main {
 
 
 
-    public static void clientDo(String input){
+    public static void clientDo(String input) throws IOException {
         String[] inputArray = input.split(" ");
 
         try{
-            switch(inputArray[1]){
+            switch(inputArray[1]) {
                 case "gc":
                     game = new Game();
                     game.runningThis = new Thread(game);
@@ -81,54 +81,50 @@ public class Main {
                     Main.connection.out.send("Hi game");
                     break;
                 case "chat":
-                    try{
-                        String senderName = "Connection "+inputArray[0];
-                        game.window.chatArea.append("\n\n"+senderName+": "+input.substring(10));
-                    }catch (Exception e){};
+                    try {
+                        String senderName = "Connection " + inputArray[0];
+                        game.window.chatArea.append("\n\n" + senderName + ": " + input.substring(10));
+                    } catch (Exception e) {
+                    }
+                    ;
                     break;
                 case "gs":
                     menuWindow.addGame();
                     break;
                 case "setup":
-                    if(inputArray[2].equals("deal")){
-                        if(inputArray[3].equals("card0")) {
+                    if (inputArray[2].equals("deal")) {
+                        if (inputArray[3].equals("card0")) {
                             game.card0 = Integer.parseInt(inputArray[4]);
                             if (game.card0 == -1)
                                 game.card0 = 52;
-                            }
-                        else if(inputArray[3].equals("card1")) {
+                        } else if (inputArray[3].equals("card1")) {
                             game.card1 = Integer.parseInt(inputArray[4]);
                             if (game.card0 == -1)
                                 game.card0 = 52;
+                        } else if (inputArray[2].equals("place")) {
+                            game.placeAtTable = Integer.parseInt(inputArray[3]);
+                            game.peopleAtTable = Integer.parseInt(inputArray[4]);
+                            game.players.clear();
+                            for (int i = 0; i < game.peopleAtTable; i++) {
+                                game.players.add(new PlayerInfo());
+                            }
+                        } else if (inputArray[2].equals("dealer")) {
+                            game.dealer = Integer.parseInt(inputArray[3]);
+                        } else if (inputArray[2].equals("smallblind")) {
+                            game.smallblind = Integer.parseInt(inputArray[3]);
+                        } else if (inputArray[2].equals("bigblind")) {
+                            game.bigblind = Integer.parseInt(inputArray[3]);
+                        } else if (inputArray[2].equals("community")) {
+                            game.communityCards[0] = Integer.parseInt(inputArray[3]);
+                            game.communityCards[1] = Integer.parseInt(inputArray[4]);
+                            game.communityCards[2] = Integer.parseInt(inputArray[5]);
+                            game.communityCards[3] = Integer.parseInt(inputArray[6]);
+                            game.communityCards[4] = Integer.parseInt(inputArray[7]);
                         }
-                    }
-                    else if(inputArray[2].equals("place")){
-                        game.placeAtTable = Integer.parseInt(inputArray[3]);
-                        game.peopleAtTable = Integer.parseInt(inputArray[4]);
-                        game.players.clear();
-                        for(int i = 0;i < game.peopleAtTable; i++){
-                            game.players.add(new PlayerInfo());
-                        }
-                    }
-                    else if(inputArray[2].equals("dealer")){
-                        game.dealer = Integer.parseInt(inputArray[3]);
-                    }
-                    else if(inputArray[2].equals("smallblind")){
-                        game.smallblind = Integer.parseInt(inputArray[3]);
-                    }
-                    else if(inputArray[2].equals("bigblind")){
-                        game.bigblind = Integer.parseInt(inputArray[3]);
-                    }
-                    else if (inputArray[2].equals("community")) {
-                        game.communityCards[0] = Integer.parseInt(inputArray[3]);
-                        game.communityCards[1] = Integer.parseInt(inputArray[4]);
-                        game.communityCards[2] = Integer.parseInt(inputArray[5]);
-                        game.communityCards[3] = Integer.parseInt(inputArray[6]);
-                        game.communityCards[4] = Integer.parseInt(inputArray[7]);
                     }
                     break;
                 case "info":
-                    if(inputArray[2].equals("money")){
+                    if (inputArray[2].equals("money")) {
                         game.players.get(Integer.parseInt(inputArray[3])).cash = Integer.parseInt(inputArray[4]);
                     }
                     break;
