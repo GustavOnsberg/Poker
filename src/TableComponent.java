@@ -62,6 +62,7 @@ public class TableComponent extends JPanel {
 //loop
     public void paintComponent(Graphics g){
         checkPlayers(players, Main.game.players);
+        checkBoard();
         super.paintComponent(g);
         drawTable(g);
         drawPlayers(g);
@@ -215,22 +216,42 @@ public class TableComponent extends JPanel {
             }
         }
         if (numOfPlayers > 1 && Main.game.card0 != 52 && Main.game.card1 != 52 && notDealt) {
-            giveCard(-1,0,0,0,true, cards[Main.game.card0]);
-            giveCard(-1, 0, 0, 1, true, cards[Main.game.card1]);
+            int delay = 100;
             for (int i = 1; i < numOfPlayers; i++) {
-                giveCard(-1, i, 0, 0, false, DataTypes.CardType.S1);
-                giveCard(-1, i, 0, 1, false, DataTypes.CardType.S1);
+                giveCard(-1, i, 0, 0, false,i*delay, DataTypes.CardType.S1);
             }
+            giveCard(-1,0,0,0,true,numOfPlayers*delay, cards[Main.game.card0]);
+            for (int i = 1; i < numOfPlayers; i++) {
+                giveCard(-1, i, 0, 1, false,numOfPlayers*delay+i*delay, DataTypes.CardType.S1);
+            }
+            giveCard(-1, 0, 0, 1, true,numOfPlayers*delay*2, cards[Main.game.card1]);
             notDealt = false;
         }
         if (Main.game.showEnemyCards && notShown) {
             for (int i = 1; i < numOfPlayers; i++) {
-                giveCard(i,i,0,0,true,playersG.get(i).card0);
-                giveCard(i,i,1,1,true,playersG.get(i).card1);
+                giveCard(i,i,0,0,true,i*1000,playersG.get(i).card0);
+                giveCard(i,i,1,1,true,i*1000,playersG.get(i).card1);
             }
             notShown = false;
         }
 
+    }
+    public void checkBoard(){
+        if (communityCards[0] != cards[Main.game.communityCards[0]]) {
+            giveCard(-1,-1,0,1,true,0,cards[Main.game.communityCards[0]]);
+        }
+        if (communityCards[1] != cards[Main.game.communityCards[1]]) {
+            giveCard(-1,-1,0,2,true,0,cards[Main.game.communityCards[1]]);
+        }
+        if (communityCards[2] != cards[Main.game.communityCards[2]]) {
+            giveCard(-1,-1,0,3,true,0,cards[Main.game.communityCards[2]]);
+        }
+        if (communityCards[3] != cards[Main.game.communityCards[3]]) {
+            giveCard(-1,-1,0,4,true,0,cards[Main.game.communityCards[3]]);
+        }
+        if (communityCards[4] != cards[Main.game.communityCards[4]]) {
+            giveCard(-1,-1,0,5,true,0,cards[Main.game.communityCards[4]]);
+        }
     }
     public int getPosX(int entityId, int cardId){
         if (entityId < 0) {
@@ -267,16 +288,16 @@ public class TableComponent extends JPanel {
             return (int) (Math.cos(angle*entityId)*getHeight()/2*radius+getHeight()/2);
         }
     }
-    public void giveCard(int startEntityId, int endEntityId, int startCardId, int endCardId, boolean isShown, DataTypes.CardType cardType){
+    public void giveCard(int startEntityId, int endEntityId, int startCardId, int endCardId, boolean isShown, int delay, DataTypes.CardType cardType){
         float endSize = animSize;
         float startSize = animSize;
         float endFlip = 1f;
         if (endEntityId == 0) { endSize = animSize*1.5f; }
         if (startEntityId == 0) { startSize = animSize*1.5f; }
         if (!isShown){ endFlip = -1f;}
-        animList.add(new AnimInfo(this.getPosX(startEntityId,startCardId), this.getPosY(startEntityId,startCardId),this.getPosX(endEntityId,endCardId), this.getPosY(endEntityId,endCardId), 0, 1000, cardType, -1f,endFlip,  startSize,endSize, endEntityId, endCardId));
+        animList.add(new AnimInfo(this.getPosX(startEntityId,startCardId), this.getPosY(startEntityId,startCardId),this.getPosX(endEntityId,endCardId), this.getPosY(endEntityId,endCardId), delay+0, delay+500, cardType, -1f,endFlip,  startSize,endSize, endEntityId, endCardId));
     }
-    public void takeCard(int startEntityId, int endEntityId, int startCardId, int endCardId, boolean isShown){
+    public void takeCard(int startEntityId, int endEntityId, int startCardId, int endCardId, boolean isShown, int delay){
         DataTypes.CardType card = DataTypes.CardType.none;
         if (endEntityId > -1) {
             PlayerInfo playerInfo = players.get(endEntityId);
@@ -292,7 +313,7 @@ public class TableComponent extends JPanel {
         if (endEntityId == 0) { endSize = animSize*1.5f; }
         if (startEntityId == 0) { startSize = animSize*1.5f; }
         if (!isShown){ endFlip = -1f;}
-        animList.add(new AnimInfo( this.getPosX(endEntityId,endCardId), this.getPosY(endEntityId,endCardId),this.getPosX(startEntityId,startCardId), this.getPosY(startEntityId,startCardId), 0, 1000, card, endFlip,-1f,  endSize, startSize, endEntityId));
+        animList.add(new AnimInfo( this.getPosX(endEntityId,endCardId), this.getPosY(endEntityId,endCardId),this.getPosX(startEntityId,startCardId), this.getPosY(startEntityId,startCardId), delay+0, delay+500, card, endFlip,-1f,  endSize, startSize, endEntityId));
 
     }
 }
