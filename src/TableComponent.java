@@ -70,6 +70,7 @@ public class TableComponent extends JPanel {
         drawTurn(g);
         drawTable(g);
         drawPot(g);
+        drawBet(g);
         drawPlayers(g);
         drawBoard(g, communityCards, sizeVar);
         drawAnim(animList, g);
@@ -127,15 +128,18 @@ public class TableComponent extends JPanel {
         String pot = "Current pot:"+Main.game.pot;
         g.drawString(pot, (int) (getWidth()/2-size*20*pot.length()), (int) ((getHeight()/2)*1.25));
     }
-    public void drawTurn(Graphics g){
-        g.drawRoundRect(getPosX(Main.game.turn,0),getPosY(Main.game.turn,0),getX(Main.game.turn,1),getPosY(Main.game.turn,1),20,100);
-    }
     public void drawBet(Graphics g){
         float size = sizeVar*getHeight()/2000;
-        Font font = new Font("Verdana", Font.BOLD, (int) (66*size));
+        float eSize = (float) (size*(0.75-players.size()*0.02));
+        Font font = new Font("Verdana", Font.BOLD, (int) (66*eSize));
         g.setFont(font);
-        String bet = "Current pot:"+Main.game.bet;
-        g.drawString(bet, (int) (getWidth()/2-size*20*pot.length()), (int) ((getHeight()/2)*1.25));
+        for (int i = 1; i < players.size(); i++) {
+            String bet = "Bet:"+Main.game.players.get(i).bet;
+            g.drawString(bet, (int) (getPosX(i,-2)-cardW*eSize), (int) (getPosY(i,-2)+cardH/2*eSize+130*eSize));
+        }
+    }
+    public void drawTurn(Graphics g){
+        g.drawRoundRect(getPosX(Main.game.turn,0),getPosY(Main.game.turn,0),getPosX(Main.game.turn,1),getPosY(Main.game.turn,1),20,100);
     }
     public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize, boolean isShown){
         drawCard(x, y, g, card, cardImage, cardSize,isShown, 1, 1);
@@ -215,11 +219,11 @@ public class TableComponent extends JPanel {
     public void drawTable(Graphics g){
         int tableW = (int) (getWidth()*0.6);
         int tableH = (int) (getHeight()*0.6);
-        g.setColor(Color.getHSBColor(0.1f, 1, 0.6f));
+        g.setColor(Color.getHSBColor(0.3f, 1, 0.5f));
         g.fillOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(10));
-        g2.setColor(Color.getHSBColor(0.5f, 1, 0.6f));
+        g2.setColor(Color.getHSBColor(0f, 0, 0f));
         g2.drawOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
         g.setColor(Color.getHSBColor(0,1,0));
     }
@@ -303,6 +307,8 @@ public class TableComponent extends JPanel {
 
             if (cardId == -1) {
                 return (int) (-Math.sin(angle*entityId)*getWidth()/2*radius*0.7+getWidth()/2);
+            }else if(cardId == -2){
+                return (int) (-Math.sin(angle*entityId)*getWidth()/2*radius+getWidth()/2);
             }else {
                 int offset;
                 if (entityId == 0) {
@@ -322,6 +328,8 @@ public class TableComponent extends JPanel {
             float angle = (float) (Math.PI*2/(players.size()));
             if (cardId == -1) {
                 return (int) (Math.cos(angle*entityId)*getHeight()/2*radius*0.7+getHeight()/2);
+            }else if(cardId == -2){
+                    return (int) (Math.cos(angle * entityId) * getHeight() / 2 * radius + getHeight() / 2);
             }
             if (entityId == 0) {
                 return (int) (Math.cos(angle*entityId)*getHeight()/2*radius+getHeight()/2-sizeVar*getHeight()/60);
