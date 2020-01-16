@@ -112,11 +112,18 @@ public class TableComponent extends JPanel {
     }
     public void drawBoard(Graphics g, DataTypes.CardType[] comCards, float sizeVar){
         float size = sizeVar*getHeight()/3000;
-        int x = (int) (getWidth()/2+size*2.5*cardW);
+        int x = (int) (getWidth()/2-size*2.5*cardW);
         drawCard(x, getHeight()/2, g, DataTypes.CardType.S1, cardBack, size, false);
         for (int i = 0; i < 5; i++) {
-            drawCard((int) (x-(i+1)*cardW*size), getHeight()/2, g, comCards[i], cardFront, size, true);
+            drawCard((int) (x+(i+1)*cardW*size), getHeight()/2, g, comCards[i], cardFront, size, true);
         }
+    }
+    public void DrawPot(Graphics g){
+        float size = sizeVar*getHeight()/2000;
+        Font font = new Font("Verdana", Font.BOLD, (int) (12*size*5.5));
+        g.setFont(font);
+        String pot = ""+Main.game.pot;
+        g.drawString(pot, getWidth()/2, (int) ((getHeight()/2)*1.1));
     }
     public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize, boolean isShown){
         drawCard(x, y, g, card, cardImage, cardSize,isShown, 1, 1);
@@ -259,12 +266,8 @@ public class TableComponent extends JPanel {
     public void checkCash(){
         int numOfPlayers = Main.game.peopleAtTable;
             for (int i = 0; i < numOfPlayers; i++) {
-
-                int cash = Main.game.players.get(i).getCash();
                 if (players.size() == numOfPlayers) {
-                    players.get(i).setCash(cash);
-                    System.out.println(i);
-                    System.out.println("num"+numOfPlayers);
+                    players.get(i).setCash(Main.game.players.get(i).getCash());
                 }
 
 
@@ -275,7 +278,7 @@ public class TableComponent extends JPanel {
     public int getPosX(int entityId, int cardId){
         if (entityId < 0) {
             float size = sizeVar*getHeight()/3000;
-            return (int) (getWidth()/2+size*(2.5-cardId)*cardW);
+            return (int) (getWidth()/2-size*(2.5+cardId)*cardW);
         }else {
 
             float size = sizeVar*getHeight()/2000;
