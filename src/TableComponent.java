@@ -62,6 +62,7 @@ public class TableComponent extends JPanel {
 //loop
     public void paintComponent(Graphics g){
         checkPlayers(players, Main.game.players);
+        checkBoard();
         super.paintComponent(g);
         drawTable(g);
         drawPlayers(g);
@@ -234,6 +235,23 @@ public class TableComponent extends JPanel {
             notShown = false;
         }
 
+    }
+    public void checkBoard(){
+        if (communityCards[0] != cards[Main.game.communityCards[0]]) {
+            giveCard(-1,-1,0,1,true,0,cards[Main.game.communityCards[0]]);
+        }
+        if (communityCards[1] != cards[Main.game.communityCards[1]]) {
+            giveCard(-1,-1,0,2,true,0,cards[Main.game.communityCards[1]]);
+        }
+        if (communityCards[2] != cards[Main.game.communityCards[2]]) {
+            giveCard(-1,-1,0,3,true,0,cards[Main.game.communityCards[2]]);
+        }
+        if (communityCards[3] != cards[Main.game.communityCards[3]]) {
+            giveCard(-1,-1,0,4,true,0,cards[Main.game.communityCards[3]]);
+        }
+        if (communityCards[4] != cards[Main.game.communityCards[4]]) {
+            giveCard(-1,-1,0,5,true,0,cards[Main.game.communityCards[4]]);
+        }
     }
     public int getPosX(int entityId, int cardId){
         if (entityId < 0) {
