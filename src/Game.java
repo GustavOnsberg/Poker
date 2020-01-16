@@ -17,6 +17,7 @@ public class Game implements Runnable {
     int dealer = -1;
     int smallblind = -1;
     int bigblind = -1;
+    int pot = 0;
 
 
 

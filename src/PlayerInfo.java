@@ -2,11 +2,13 @@ public class PlayerInfo {
     public DataTypes.CardType card0;
     public DataTypes.CardType card1;
     public int cash;
+    public int bet;
 
     PlayerInfo(){
         this.card0 = DataTypes.CardType.none;
         this.card1 = DataTypes.CardType.none;
         this.cash = 0;
+        this.bet = 0;
     }
     PlayerInfo(DataTypes.CardType card0, DataTypes.CardType card1, int cash){
         this.card0 = card0;
