@@ -82,7 +82,7 @@ public class Main {
                     break;
                 case "chat":
                     try {
-                        String senderName = "Connection " + inputArray[0];
+                        String senderName = inputArray[0];
                         game.window.chatArea.append("\n\n" + senderName + ": " + input.substring(10));
                     } catch (Exception e) {
                     }
@@ -135,6 +135,9 @@ public class Main {
                     }
                     else if (inputArray[2].equals("pot")) {
                         game.pot = Integer.parseInt(inputArray[3]);
+                    }
+                    else if (inputArray[2].equals("turn")) {
+                        game.turn = Integer.parseInt(inputArray[3]);
                     }
                     break;
             }
