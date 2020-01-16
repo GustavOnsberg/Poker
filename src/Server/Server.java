@@ -13,10 +13,6 @@ public class Server {
     public static long lastGameSessionId = 0;
 
 
-    Server(){
-
-    }
-
     public static void main(String [] args) throws Exception {
         threadListner.start();
         threadNonGameConnectionsHandler.start();
@@ -27,7 +23,7 @@ public class Server {
 
 
     public static GameSession getGameSessionFromId(long id) throws Exception{
-        int lastJump = gameSessions.size()-1;
+        /*int lastJump = gameSessions.size()-1;
         int lastCheck = 0;
         long lastId = 0;
         while(true){
@@ -49,12 +45,18 @@ public class Server {
             if(lastJump == 0){
                 throw new Exception("Session not found");
             }
+        }*/
+
+        for(int i = 0; i < gameSessions.size(); i++){
+            if(gameSessions.get(i).getSessionId() == id)
+                return gameSessions.get(i);
         }
+        throw new Exception("Session not found");
     }
 
 
     public static ConnectionHandler getConnectionHandlerFromId(long id, ArrayList<ConnectionHandler> connHandlers) throws Exception{
-        int lastJump = connHandlers.size()-1;
+        /*int lastJump = connHandlers.size()-1;
         int lastCheck = 0;
         long lastId = 0;
         while(true){
@@ -75,7 +77,13 @@ public class Server {
             if(lastJump == 0){
                 throw new Exception("Connection not found");
             }
+        }*/
+
+        for(int i = 0; i < connHandlers.size(); i++){
+            if(connHandlers.get(i).connectionId == id)
+                return connHandlers.get(i);
         }
+        throw new Exception("Connection not found");
     }
 
     public static ConnectionHandler getConnectionHandlerFromId(long id) throws Exception{

@@ -26,6 +26,7 @@ public class NonGameConnectionsHandler implements Runnable{
                 else if(System.currentTimeMillis() - Server.connectionHandlers.get(i).lastHeatBeat > 60000){
                     try {
                         long removedId = Server.connectionHandlers.get(i).connectionId;
+                        Server.connectionHandlers.get(i).in.threadRunning = false;
                         Server.connectionHandlers.get(i).socket.close();
                         Server.connectionHandlers.remove(i);
                         System.out.println("NGCH >Connection with id "+removedId+" has benn removed due to missing heartbeat");
@@ -95,7 +96,7 @@ public class NonGameConnectionsHandler implements Runnable{
                     int gamesSend = 0;
                     for(int i = 0; i < Server.gameSessions.size(); i++){
                         if(Server.gameSessions.get(i).getPassword().equals("") && gamesSend < 16){
-                            Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).out.send("gs "+Server.gameSessions.get(i).getSessionId()+" "+Server.gameSessions.get(i).getName()+" "+Server.gameSessions.get(i).connectionHandlers.size()+"/"+Server.gameSessions.get(i).getMaxPlayers());
+                            Server.getConnectionHandlerFromId(Long.parseLong(inputArray[0])).out.send("gs "+Server.gameSessions.get(i).getSessionId()+" "+Server.gameSessions.get(i).getName()+" "+Server.gameSessions.get(i).connectionHandlers.size()+" "+Server.gameSessions.get(i).getMaxPlayers());
                             gamesSend++;
                         }
                     }

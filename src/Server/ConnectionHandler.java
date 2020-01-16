@@ -16,8 +16,8 @@ public class ConnectionHandler{
 
     PlayerState playerState = PlayerState.Folded;
     int money = 10000;
-    int card0 = 53;
-    int card1 = 53;
+    int card0 = -1;
+    int card1 = -1;
     int bet = 0;
     int betThisRound = 0;
     boolean hasHadChanceToBet = false;
