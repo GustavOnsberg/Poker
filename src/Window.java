@@ -206,7 +206,8 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
             tableComponent.repaint();
             betSliderLabel.setText(betSliderLabel.getText());
             betSliderLabel.setBounds(betSliderLabel.getBounds());
-            cashLabel.setText("Cash: "+Main.game.players.get(Main.game.placeAtTable).cash);
+            if(Main.game.placeAtTable >= 0)
+                cashLabel.setText("Cash: "+Main.game.players.get(Main.game.placeAtTable).cash);
 
             try {
                 Thread.sleep(10);
