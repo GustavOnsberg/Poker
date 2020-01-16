@@ -25,6 +25,7 @@ public class TableComponent extends JPanel {
     boolean[] cardShown;
     boolean notDealt = true;
     boolean notShown = true;
+    int boardDealt = 0;
     public DataTypes.CardType[] communityCards = new DataTypes.CardType[5];
     public ArrayList<PlayerInfo> players = new ArrayList<>();
     public ArrayList<AnimInfo> animList = new ArrayList<>();
@@ -91,8 +92,8 @@ public class TableComponent extends JPanel {
         float eSize = (float) (size*(0.75-players.size()*0.02));
         if (isYou) {
             //cards
-            drawCard((int) (x-cardW*size/2), y, g, card0, cardFront, size,isShown);
-            drawCard((int) (x+cardW*size/2), y, g, card1, cardFront, size, isShown);
+            drawCard((int) (x-cardW*size/2), (int) (y-size*35), g, card0, cardFront, size,isShown);
+            drawCard((int) (x+cardW*size/2), (int) (y-size*35), g, card1, cardFront, size, isShown);
         }else {
             //cards
             drawCard((int) (x-cardW*eSize/2), y, g, card0, cardFront, eSize, isShown);
@@ -237,21 +238,20 @@ public class TableComponent extends JPanel {
 
     }
     public void checkBoard(){
-        System.out.println(Main.game.communityCards[0]);
-        if (Main.game.communityCards[0] != 52) {
+        if (Main.game.communityCards[0] != 52 && boardDealt < 1) {
             giveCard(-1,-1,0,1,true,0,cards[Main.game.communityCards[0]]);
+            giveCard(-1,-1,0,2,true,100,cards[Main.game.communityCards[1]]);
+            giveCard(-1,-1,0,3,true,200,cards[Main.game.communityCards[2]]);
+            boardDealt = 1;
         }
-        if (Main.game.communityCards[1] != 52) {
-            giveCard(-1,-1,0,2,true,0,cards[Main.game.communityCards[1]]);
-        }
-        if (Main.game.communityCards[2] != 52) {
-            giveCard(-1,-1,0,3,true,0,cards[Main.game.communityCards[2]]);
-        }
-        if (Main.game.communityCards[3] != 52) {
+
+        if (Main.game.communityCards[3] != 52 && boardDealt < 2) {
             giveCard(-1,-1,0,4,true,0,cards[Main.game.communityCards[3]]);
+            boardDealt = 2;
         }
-        if (Main.game.communityCards[4] != 52) {
+        if (Main.game.communityCards[4] != 52 && boardDealt < 3) {
             giveCard(-1,-1,0,5,true,0,cards[Main.game.communityCards[4]]);
+            boardDealt = 3;
         }
     }
     public int getPosX(int entityId, int cardId){
@@ -286,8 +286,13 @@ public class TableComponent extends JPanel {
             if (cardId == -1) {
                 return (int) (Math.cos(angle*entityId)*getHeight()/2*radius*0.7+getHeight()/2);
             }
-            return (int) (Math.cos(angle*entityId)*getHeight()/2*radius+getHeight()/2);
+            if (entityId == 0) {
+                return (int) (Math.cos(angle*entityId)*getHeight()/2*radius+getHeight()/2-sizeVar*getHeight()/60);
+            }else {
+                return (int) (Math.cos(angle * entityId) * getHeight() / 2 * radius + getHeight() / 2);
+            }
         }
+
     }
     public void giveCard(int startEntityId, int endEntityId, int startCardId, int endCardId, boolean isShown, int delay, DataTypes.CardType cardType){
         float endSize = animSize;
