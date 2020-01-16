@@ -38,7 +38,7 @@ public class Main {
         connection.out.send("gg");
 
         while(true){
-            if (System.currentTimeMillis() - lastHeatBest > 20000){
+            if (System.currentTimeMillis() - lastHeatBest > 6000){
                 connection.out.send("hb");
                 lastHeatBest = System.currentTimeMillis();
             }
@@ -121,11 +121,6 @@ public class Main {
                         game.bigblind = Integer.parseInt(inputArray[3]);
                     }
                     break;
-                case "info":
-                    if (inputArray[2].equals("money")) {
-                        game.players.get(Integer.parseInt(inputArray[3])).cash = Integer.parseInt(inputArray[4]);
-                    }
-                    break;
                 case "game":
                     if (inputArray[2].equals("community")) {
                         game.communityCards[0] = Integer.parseInt(inputArray[3]);
@@ -133,6 +128,13 @@ public class Main {
                         game.communityCards[2] = Integer.parseInt(inputArray[5]);
                         game.communityCards[3] = Integer.parseInt(inputArray[6]);
                         game.communityCards[4] = Integer.parseInt(inputArray[7]);
+                    }
+                    else if (inputArray[2].equals("money")) {
+                        game.players.get(Integer.parseInt(inputArray[3])).cash = Integer.parseInt(inputArray[4]);
+                        game.players.get(Integer.parseInt(inputArray[3])).bet = Integer.parseInt(inputArray[5]);
+                    }
+                    else if (inputArray[2].equals("pot")) {
+                        game.pot = Integer.parseInt(inputArray[3]);
                     }
                     break;
             }
