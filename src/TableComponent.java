@@ -237,19 +237,20 @@ public class TableComponent extends JPanel {
 
     }
     public void checkBoard(){
-        if (communityCards[0] != cards[Main.game.communityCards[0]]) {
+        System.out.println(Main.game.communityCards[0]);
+        if (Main.game.communityCards[0] != 52) {
             giveCard(-1,-1,0,1,true,0,cards[Main.game.communityCards[0]]);
         }
-        if (communityCards[1] != cards[Main.game.communityCards[1]]) {
+        if (Main.game.communityCards[1] != 52) {
             giveCard(-1,-1,0,2,true,0,cards[Main.game.communityCards[1]]);
         }
-        if (communityCards[2] != cards[Main.game.communityCards[2]]) {
+        if (Main.game.communityCards[2] != 52) {
             giveCard(-1,-1,0,3,true,0,cards[Main.game.communityCards[2]]);
         }
-        if (communityCards[3] != cards[Main.game.communityCards[3]]) {
+        if (Main.game.communityCards[3] != 52) {
             giveCard(-1,-1,0,4,true,0,cards[Main.game.communityCards[3]]);
         }
-        if (communityCards[4] != cards[Main.game.communityCards[4]]) {
+        if (Main.game.communityCards[4] != 52) {
             giveCard(-1,-1,0,5,true,0,cards[Main.game.communityCards[4]]);
         }
     }
