@@ -20,6 +20,7 @@ public class TableComponent extends JPanel {
     public float sizeVar = 1f;
     public float animSize = 0.15f;
     public DataTypes.CardType[] cards = DataTypes.CardType.values();
+    public float lastUpdate = 0;
     public float angle;
     public int playerNum;
     boolean[] cardShown;
@@ -64,6 +65,7 @@ public class TableComponent extends JPanel {
     public void paintComponent(Graphics g){
         checkPlayers(players, Main.game.players);
         checkBoard();
+        checkCash();
         super.paintComponent(g);
         drawTable(g);
         drawPlayers(g);
@@ -253,6 +255,22 @@ public class TableComponent extends JPanel {
             giveCard(-1,-1,0,5,true,0,cards[Main.game.communityCards[4]]);
             boardDealt = 3;
         }
+    }
+    public void checkCash(){
+        int numOfPlayers = Main.game.peopleAtTable;
+            for (int i = 0; i < numOfPlayers; i++) {
+
+                int cash = Main.game.players.get(i).getCash();
+                if (players.size() == numOfPlayers) {
+                    players.get(i).setCash(cash);
+                    System.out.println(i);
+                    System.out.println("num"+numOfPlayers);
+                }
+
+
+            }
+
+
     }
     public int getPosX(int entityId, int cardId){
         if (entityId < 0) {
