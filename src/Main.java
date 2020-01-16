@@ -139,6 +139,13 @@ public class Main {
                     else if (inputArray[2].equals("turn")) {
                         game.turn = Integer.parseInt(inputArray[3]);
                     }
+                    else if (inputArray[2].equals("color")) {
+                        try{
+                            game.backgroungColor = Color.getHSBColor(Float.parseFloat(inputArray[3]),Float.parseFloat(inputArray[4]),Float.parseFloat(inputArray[5]));
+                            game.window.gamePanel.setBackground(game.backgroungColor);
+                        }catch (Exception e){}
+
+                    }
                     break;
             }
         }catch(Exception e){

@@ -87,7 +87,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         gamePanel.add(betSlider);
         gamePanel.add(betSliderLabel);
         gamePanel.add(tableComponent);
-        gamePanel.setBackground(Color.getHSBColor(0.6667f,0.5f,0.5f));
+        gamePanel.setBackground(Main.game.backgroungColor);
         tableComponent.setBackground(null);
 
         sidePanel.setLayout(null);
