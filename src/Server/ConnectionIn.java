@@ -10,6 +10,7 @@ public class ConnectionIn implements Runnable {
     public Socket socket;
     public Scanner input;
     public long connectionId = 0;
+    public  boolean threadRunning = true;
 
     public BlockingQueue queue = null;
 
@@ -21,7 +22,7 @@ public class ConnectionIn implements Runnable {
 
     @Override
     public void run() {
-        while(true){
+        while(threadRunning){
             while(input.hasNextLine()){
                 String strIn = input.nextLine();
 

@@ -13,7 +13,7 @@ public class GameSession implements Runnable {
 
     GameState gameState = GameState.Setup;
     RoundState roundState = RoundState.PreFlop;
-    int dealer = -1;
+    int dealer = 0;
     int smallBlind = 0;
     int bigBlind = 0;
     int turn = 0;
@@ -25,6 +25,8 @@ public class GameSession implements Runnable {
 
     int smallBlindBet = 10;
 
+    long creationTime;
+
 
     GameLogic gameLogic = new GameLogic();
 
@@ -34,12 +36,14 @@ public class GameSession implements Runnable {
         this.sessionId = sessionId;
         this.name = name;
         this.password = password;
+        creationTime = System.currentTimeMillis();
     }
 
 
     @Override
     public void run() {
-        while(true){
+        boolean threadRunning = true;
+        while(threadRunning){
             for(int i = 0; i < connectionHandlers.size(); i++){
                 if (!connectionHandlers.get(i).queue.isEmpty()){
                     try {
@@ -48,18 +52,26 @@ public class GameSession implements Runnable {
                         e.printStackTrace();
                     }
                 }
-                else if(System.currentTimeMillis() - connectionHandlers.get(i).lastHeatBeat > 60000){
+                else if(System.currentTimeMillis() - connectionHandlers.get(i).lastHeatBeat > 20000){
                     try {
                         long removedId = connectionHandlers.get(i).connectionId;
+                        connectionHandlers.get(i).in.threadRunning = false;
                         connectionHandlers.get(i).socket.close();
                         connectionHandlers.remove(i);
                         System.out.println("Game Session "+sessionId+" >Connection with id "+removedId+" has benn removed due to missing heartbeat");
+
+
                         sendPlaceAtTable();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     i--;
                 }
+            }
+            if(connectionHandlers.size() == 0 && System.currentTimeMillis() - creationTime > 20000){
+                System.out.println("Game Session "+sessionId+" >Closing game session due to being empty");
+                Server.gameSessions.remove(this);
+                threadRunning = false;
             }
 
             if(peopleAtTable != connectionHandlers.size()){
@@ -75,8 +87,15 @@ public class GameSession implements Runnable {
                     if(connectionHandlers.get(i).playerState == PlayerState.Folded){
                         connectionHandlers.get(i).playerState = PlayerState.Playing;
                     }
+                    connectionHandlers.get(i).card0 = -1;
+                    connectionHandlers.get(i).card1 = -1;
+                    connectionHandlers.get(i).out.send("setup deal card0 "+connectionHandlers.get(i).card0);
                 }
-                distributeButton(0);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 dealCards();
                 gameState = GameState.InProgress;
             }
@@ -89,7 +108,6 @@ public class GameSession implements Runnable {
             }
         }
     }
-
 
     public long getSessionId() {
         return sessionId;
@@ -112,9 +130,7 @@ public class GameSession implements Runnable {
                 case "chat":
                     try{
                         long fromId = Long.parseLong(inputArray[0]);
-                        for(int i = 0; i < connectionHandlers.size(); i++){
-                            connectionHandlers.get(i).out.send("chat "+fromId+" "+input.substring(6));
-                        }
+                        broadcast("chat Connection_"+fromId+" "+input.substring(6));
                     }catch (Exception e){}
                     break;
                 case "hb":
@@ -171,7 +187,14 @@ public class GameSession implements Runnable {
                     case "money":
                         try{
                             connectionHandlers.get(Integer.parseInt(inputArray[4])).money = Integer.parseInt(inputArray[5]);
-                            broadcast("info money "+inputArray[4]+" "+inputArray[5]);
+                            broadcast("game money "+inputArray[4]+" "+inputArray[5]);
+                        }catch(Exception e){
+
+                        }
+                        break;
+                    case "color":
+                        try{
+                            broadcast("game color "+inputArray[4]+" "+inputArray[5]+" "+inputArray[6]);
                         }catch(Exception e){
 
                         }
@@ -184,18 +207,7 @@ public class GameSession implements Runnable {
     public boolean startGame() throws Exception {
         if(connectionHandlers.size() > 1){
             System.out.println("Game Session "+sessionId+" >Starting game");
-            distributeButton(dealer + 1);
-            for(int i = 0; i < connectionHandlers.size(); i++){
-                connectionHandlers.get(i).playerState = PlayerState.Playing;
-            }
-            gameState = GameState.Ready;
-            turn = 1;
-            long mover = connectionHandlers.get(turn).connectionId;
-            move(mover+" move raise "+smallBlindBet);
-            Server.getConnectionHandlerFromId(mover, connectionHandlers).hasHadChanceToBet = false;
-            mover = connectionHandlers.get(turn).connectionId;
-            move(mover+" move raise "+smallBlindBet);
-            Server.getConnectionHandlerFromId(mover, connectionHandlers).hasHadChanceToBet = false;
+            startNewRound();
             return true;
         }
         System.out.println("Game Session "+sessionId+" >Failed to start game");
@@ -210,8 +222,8 @@ public class GameSession implements Runnable {
             switch (inputArray[2]){
                 case "fold":
                     connectionHandlers.get(turn).playerState = PlayerState.Folded;
-                    pot+=connectionHandlers.get(turn).bet;
-                    connectionHandlers.get(turn).bet = 0;
+                    pot+=connectionHandlers.get(turn).betThisRound;
+                    connectionHandlers.get(turn).betThisRound = 0;
                     broadcast("game folded "+turn);
                     connectionHandlers.get(turn).hasHadChanceToBet = true;
                     nextTurn();
@@ -252,6 +264,7 @@ public class GameSession implements Runnable {
                         }
                         broadcast("game allin "+turn+" "+currentBet);
                     }
+                    connectionHandlers.get(turn).hasHadChanceToBet = true;
                     nextTurn();
                     break;
             }
@@ -260,6 +273,8 @@ public class GameSession implements Runnable {
 
     public void nextTurn() throws Exception {
         System.out.println("Game Session "+sessionId+" >Next turn");
+        sendMoneyInfo(turn);
+        broadcast("game pot " + pot);
         boolean shouldEndBettingRound = true;
         for(int i = 0; i < connectionHandlers.size(); i++){
             shouldEndBettingRound = shouldEndBettingRound && connectionHandlers.get(i).hasHadChanceToBet;
@@ -294,6 +309,8 @@ public class GameSession implements Runnable {
                 turn = currentTurnCheck;
                 System.out.println("Game Session "+sessionId+" >Turn is "+turn);
                 broadcast("game turn "+turn);
+                connectionHandlers.get(startTurn).out.send("chat server Not your turn");
+                connectionHandlers.get(turn).out.send("chat server Your turn");
                 return;
             }
             currentTurnCheck++;
@@ -301,8 +318,15 @@ public class GameSession implements Runnable {
     }
 
     public void endBettingRound() throws Exception {
+        System.out.println("Game Session "+sessionId+" >Ending betting round");
+        for(int i = 0; i < connectionHandlers.size(); i++){
+            pot += connectionHandlers.get(i).betThisRound;
+            connectionHandlers.get(i).betThisRound = 0;
+            connectionHandlers.get(i).hasHadChanceToBet = false;
+        }
         switch(roundState){
             case PreFlop:
+                System.out.println("Game Session "+sessionId+" >Betting round is new: Flop");
                 putBetsInPot();
                 communityCards[0] = gameLogic.takeCard();
                 communityCards[1] = gameLogic.takeCard();
@@ -310,33 +334,44 @@ public class GameSession implements Runnable {
                 sendCommunityCards();
                 roundState = RoundState.Flop;
                 turn = dealer;
-                nextTurn();
                 break;
             case Flop:
+                System.out.println("Game Session "+sessionId+" >Betting round is new: Turn");
                 putBetsInPot();
                 communityCards[3] = gameLogic.takeCard();
                 sendCommunityCards();
                 roundState = RoundState.Turn;
                 turn = dealer;
-                nextTurn();
                 break;
             case Turn:
+                System.out.println("Game Session "+sessionId+" >Betting round is new: River");
                 putBetsInPot();
                 communityCards[4] = gameLogic.takeCard();
                 sendCommunityCards();
                 roundState = RoundState.River;
                 turn = dealer;
-                nextTurn();
                 break;
             case River:
+                System.out.println("Game Session "+sessionId+" >Betting round is new: Showdown");
                 putBetsInPot();
                 roundState = RoundState.Showdown;
+
+                for(int i = 0; i < connectionHandlers.size(); i++){
+                    if(connectionHandlers.get(i).playerState == PlayerState.Playing){
+                        broadcast("game enemycards "+i+" "+connectionHandlers.get(i).card0+" "+connectionHandlers.get(i).card1);
+                    }
+                    broadcast("game showall true");
+                }
+
                 endRound();
+                break;
+            case Showdown:
                 break;
         }
     }
 
     public void endRound() throws Exception {
+        System.out.println("Game Session "+sessionId+" >Ending round");
         for(int i = 1; i < connectionHandlers.size(); i++){
             if(connectionHandlers.get(i).playerState == PlayerState.Playing || connectionHandlers.get(i).playerState == PlayerState.AllIn)
                 connectionHandlers.get(i).handValue = gameLogic.evaluateHand(connectionHandlers.get(i).card0,connectionHandlers.get(i).card1,communityCards[0],communityCards[0],communityCards[0],communityCards[0],communityCards[0]);
@@ -346,37 +381,55 @@ public class GameSession implements Runnable {
             winners.clear();
             winners.add(0);
             for(int i = 1; i < connectionHandlers.size(); i++){
-                if(connectionHandlers.get(i).handValue > connectionHandlers.get(winners.get(0)).handValue || connectionHandlers.get(i).playerState == PlayerState.AllIn){
+                if(connectionHandlers.get(i).handValue > connectionHandlers.get(winners.get(0)).handValue && connectionHandlers.get(i).playerState != PlayerState.AllInPayed){
                     winners.clear();
                     winners.add(i);
                 }
-                else if(connectionHandlers.get(i).handValue == connectionHandlers.get(winners.get(0)).handValue || connectionHandlers.get(i).playerState == PlayerState.AllIn){
+                else if(connectionHandlers.get(i).handValue == connectionHandlers.get(winners.get(0)).handValue && connectionHandlers.get(i).playerState != PlayerState.AllInPayed){
                     winners.add(i);
                 }
             }
             int lowestWinnerBet = Integer.MAX_VALUE;
-            for(int i = 1; i < winners.size(); i++){
+            for(int i = 0; i < winners.size(); i++){
                 if(connectionHandlers.get(i).bet < lowestWinnerBet)
                     lowestWinnerBet = connectionHandlers.get(i).bet;
             }
 
-            for(int i = 1; i < connectionHandlers.size(); i++){
-                for(int j = 1; j < winners.size(); j++){
-                    if(connectionHandlers.get(i).bet >= lowestWinnerBet)
+            for(int i = 0; i < connectionHandlers.size(); i++){
+                for(int j = 0; j < winners.size(); j++){
+                    if(connectionHandlers.get(i).bet >= lowestWinnerBet) {
                         connectionHandlers.get(j).money += lowestWinnerBet / winners.size();
-                    else
+                        System.out.println("Game Session "+sessionId+" >Giving "+j+" "+lowestWinnerBet / winners.size());
+                    }
+                    else{
                         connectionHandlers.get(j).money += connectionHandlers.get(i).bet / winners.size();
+                        System.out.println("Game Session "+sessionId+" >Giving "+j+" "+connectionHandlers.get(i).bet / winners.size());
+                    }
                     if(connectionHandlers.get(j).bet == lowestWinnerBet)
                         connectionHandlers.get(j).playerState = PlayerState.AllInPayed;
                 }
-                connectionHandlers.get(i).bet -= lowestWinnerBet * winners.size();
-                if(connectionHandlers.get(i).bet >= lowestWinnerBet)
+
+                if(connectionHandlers.get(i).bet >= lowestWinnerBet) {
                     pot -= lowestWinnerBet;
-                else
+                }
+                else {
                     pot -= connectionHandlers.get(i).bet;
+                }
                 if(connectionHandlers.get(i).bet < 0)
                     connectionHandlers.get(i).bet = 0;
             }
+            boolean endPayout = true;
+            for(int i = 0; i < connectionHandlers.size(); i++){
+                if(connectionHandlers.get(i).bet > lowestWinnerBet) {
+                    connectionHandlers.get(i).bet -= lowestWinnerBet;
+                    endPayout = false;
+                }
+                else{
+                    connectionHandlers.get(i).bet = 0;
+                }
+            }
+            if(endPayout)
+                pot = 0;
         }
     }
 
@@ -390,8 +443,11 @@ public class GameSession implements Runnable {
 
     public void sendMoneyInfo(){
         for(int i = 0; i < connectionHandlers.size(); i++){
-            broadcast("info money "+i+" "+connectionHandlers.get(i).money);
+            broadcast("game money "+i+" "+connectionHandlers.get(i).money+" "+connectionHandlers.get(i).betThisRound);
         }
+    }
+    public void sendMoneyInfo(int player){
+        broadcast("game money "+player+" "+connectionHandlers.get(player).money+" "+connectionHandlers.get(player).bet);
     }
 
     public void sendCommunityCards(){
@@ -403,5 +459,22 @@ public class GameSession implements Runnable {
             pot += connectionHandlers.get(i).betThisRound;
             connectionHandlers.get(i).betThisRound = 0;
         }
+    }
+
+    public void startNewRound() throws Exception {
+        System.out.println("Game Session "+sessionId+" >Starting new round");
+        broadcast("game showall false");
+        distributeButton(smallBlind);
+        for(int i = 0; i < connectionHandlers.size(); i++){
+            connectionHandlers.get(i).playerState = PlayerState.Playing;
+        }
+        gameState = GameState.Ready;
+        turn = smallBlind;
+        long mover = connectionHandlers.get(turn).connectionId;
+        move(mover+" move raise "+smallBlindBet);
+        Server.getConnectionHandlerFromId(mover, connectionHandlers).hasHadChanceToBet = false;
+        mover = connectionHandlers.get(turn).connectionId;
+        move(mover+" move raise "+smallBlindBet);
+        Server.getConnectionHandlerFromId(mover, connectionHandlers).hasHadChanceToBet = false;
     }
 }

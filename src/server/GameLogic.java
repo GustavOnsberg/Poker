@@ -209,7 +209,7 @@ public class GameLogic {
                 thirdHighCardBonus = i;
 
             if(pairBonus != -1 && firstHighCardBonus != -1 && secondHighCardBonus != -1 && thirdHighCardBonus != -1)
-                return 1000000 + pairBonus * 10000 + firstHighCardBonus * 169 + secondHighCardBonus * 13 + thirdHighCardBonus;
+                return 1000000 + pairBonus * 2197 + firstHighCardBonus * 169 + secondHighCardBonus * 13 + thirdHighCardBonus;
         }
 
         //Check for High card
