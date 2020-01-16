@@ -44,10 +44,17 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
     int settingsNum = 5;
 
     JPanel infoPanel = new JPanel();
+    JLabel cashLabel = new JLabel("Cash: 346323");
+    JLabel betLabel = new JLabel("Bet: 3241");
+    Font cashFont = new Font("Verdana", Font.BOLD, 18);
+
+
     JTextArea chatArea;
     JScrollPane chatScroll;
     JTextField chatInput = new JTextField();
     JButton btnChatSend = new JButton("Send");
+
+
 
 
     TableComponent tableComponent = new TableComponent();
@@ -80,7 +87,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         gamePanel.add(betSlider);
         gamePanel.add(betSliderLabel);
         gamePanel.add(tableComponent);
-        gamePanel.setBackground(Color.GREEN);
+        gamePanel.setBackground(Main.game.backgroungColor);
         tableComponent.setBackground(null);
 
         sidePanel.setLayout(null);
@@ -127,7 +134,16 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
         btnSettingsFullscreen.addActionListener(this);
         btnSettingsLeave.addActionListener(this);
 
+        sidePanel.add(infoPanel);
+        infoPanel.setBounds(0,80,400,200);
+        infoPanel.setLayout(null);
+        cashLabel.setFont(cashFont);
+        infoPanel.add(cashLabel);
+        cashLabel.setBounds(10,10,200,20);
 
+        betLabel.setFont(cashFont);
+        infoPanel.add(betLabel);
+        betLabel.setBounds(10,30,200,20);
 
         chatArea = new JTextArea("",5,50);
         chatArea.setLineWrap(true);
@@ -145,7 +161,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
 
 
-    
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(btnSettingsFullscreen)){
@@ -181,14 +197,7 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
 
         }
         else if(actionEvent.getSource().equals(btnSettingsDeck)){
-            int startEntity = -1;
-            int startCard = 0;
 
-            int endEntity = -1;
-            int endCard =1;
-
-            tableComponent.takeCard(startEntity, endEntity, startCard, endCard,false,0);
-            tableComponent.giveCard(startEntity, endEntity, startCard, endCard, false,0, DataTypes.CardType.getRandomCard());
         }
     }
 
@@ -202,7 +211,10 @@ public class Window extends JFrame implements ActionListener, Runnable, ChangeLi
             tableComponent.repaint();
             betSliderLabel.setText(betSliderLabel.getText());
             betSliderLabel.setBounds(betSliderLabel.getBounds());
-
+            if(Main.game.placeAtTable >= 0) {
+                cashLabel.setText("Cash: " + Main.game.players.get(Main.game.placeAtTable).cash);
+                betLabel.setText("Bet: " + Main.game.players.get(Main.game.placeAtTable).bet);
+            }
 
             try {
                 Thread.sleep(10);

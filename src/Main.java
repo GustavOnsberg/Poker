@@ -38,7 +38,7 @@ public class Main {
         connection.out.send("gg");
 
         while(true){
-            if (System.currentTimeMillis() - lastHeatBest > 20000){
+            if (System.currentTimeMillis() - lastHeatBest > 6000){
                 connection.out.send("hb");
                 lastHeatBest = System.currentTimeMillis();
             }
@@ -63,11 +63,11 @@ public class Main {
 
 
 
-    public static void clientDo(String input){
+    public static void clientDo(String input) throws IOException {
         String[] inputArray = input.split(" ");
 
         try{
-            switch(inputArray[1]){
+            switch(inputArray[1]) {
                 case "gc":
                     game = new Game();
                     game.runningThis = new Thread(game);
@@ -81,55 +81,83 @@ public class Main {
                     Main.connection.out.send("Hi game");
                     break;
                 case "chat":
-                    try{
-                        String senderName = "Connection "+inputArray[0];
-                        game.window.chatArea.append("\n\n"+senderName+": "+input.substring(10));
-                    }catch (Exception e){};
+                    try {
+                        String senderName = inputArray[2];
+                        game.window.chatArea.append("\n\n" + senderName + ": " + input.split("chat "+senderName)[1]);
+                    } catch (Exception e) {
+                    }
+                    ;
                     break;
                 case "gs":
-                    menuWindow.addGame();
+                    menuWindow.addGame(inputArray[3],Integer.parseInt(inputArray[4]),Integer.parseInt(inputArray[5]),Long.parseLong(inputArray[2]));
                     break;
                 case "setup":
-                    if(inputArray[2].equals("deal")){
-                        if(inputArray[3].equals("card0")) {
+                    if (inputArray[2].equals("deal")) {
+                        if (inputArray[3].equals("card0")) {
                             game.card0 = Integer.parseInt(inputArray[4]);
                             if (game.card0 == -1)
                                 game.card0 = 52;
-                            }
-                        else if(inputArray[3].equals("card1")) {
+                        } else if (inputArray[3].equals("card1")) {
                             game.card1 = Integer.parseInt(inputArray[4]);
                             if (game.card0 == -1)
                                 game.card0 = 52;
                         }
                     }
-                    else if(inputArray[2].equals("place")){
+                    else if (inputArray[2].equals("place")) {
                         game.placeAtTable = Integer.parseInt(inputArray[3]);
                         game.peopleAtTable = Integer.parseInt(inputArray[4]);
                         game.players.clear();
-                        for(int i = 0;i < game.peopleAtTable; i++){
+                        for (int i = 0; i < game.peopleAtTable; i++) {
                             game.players.add(new PlayerInfo());
                         }
                     }
-                    else if(inputArray[2].equals("dealer")){
+                    else if (inputArray[2].equals("dealer")) {
                         game.dealer = Integer.parseInt(inputArray[3]);
                     }
-                    else if(inputArray[2].equals("smallblind")){
+                    else if (inputArray[2].equals("smallblind")) {
                         game.smallblind = Integer.parseInt(inputArray[3]);
                     }
-                    else if(inputArray[2].equals("bigblind")){
+                    else if (inputArray[2].equals("bigblind")) {
                         game.bigblind = Integer.parseInt(inputArray[3]);
                     }
-                    else if (inputArray[2].equals("community")) {
+                    break;
+                case "game":
+                    if (inputArray[2].equals("community")) {
                         game.communityCards[0] = Integer.parseInt(inputArray[3]);
                         game.communityCards[1] = Integer.parseInt(inputArray[4]);
                         game.communityCards[2] = Integer.parseInt(inputArray[5]);
                         game.communityCards[3] = Integer.parseInt(inputArray[6]);
                         game.communityCards[4] = Integer.parseInt(inputArray[7]);
                     }
-                    break;
-                case "info":
-                    if(inputArray[2].equals("money")){
+                    else if (inputArray[2].equals("money")) {
                         game.players.get(Integer.parseInt(inputArray[3])).cash = Integer.parseInt(inputArray[4]);
+                        game.players.get(Integer.parseInt(inputArray[3])).bet = Integer.parseInt(inputArray[5]);
+                    }
+                    else if (inputArray[2].equals("pot")) {
+                        game.pot = Integer.parseInt(inputArray[3]);
+                    }
+                    else if (inputArray[2].equals("turn")) {
+                        game.turn = Integer.parseInt(inputArray[3]);
+                    }
+                    else if (inputArray[2].equals("color")) {
+                        try{
+                            game.backgroungColor = Color.getHSBColor(Float.parseFloat(inputArray[3]),Float.parseFloat(inputArray[4]),Float.parseFloat(inputArray[5]));
+                            game.window.gamePanel.setBackground(game.backgroungColor);
+                        }catch (Exception e){}
+
+                    }
+                    else if (inputArray[2].equals("turn")) {
+                        int card0 = Integer.parseInt(inputArray[3]);
+                        int card1 = Integer.parseInt(inputArray[4]);
+                        if(card0 == -1)
+                            card0 = 52;
+                        if(card1 == -1)
+                            card0 = 52;
+                        game.players.get(Integer.parseInt(inputArray[2])).card0 = DataTypes.CardType.values()[card0];
+                        game.players.get(Integer.parseInt(inputArray[2])).card0 = DataTypes.CardType.values()[card1];
+                    }
+                    else if (inputArray[2].equals("showall")) {
+                        game.showEnemyCards = inputArray[3].equals("true");
                     }
                     break;
             }

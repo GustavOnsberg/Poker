@@ -17,6 +17,10 @@ public class Game implements Runnable {
     int dealer = -1;
     int smallblind = -1;
     int bigblind = -1;
+    int pot = 0;
+    int turn = 0;
+
+    Color backgroungColor = Color.getHSBColor(0.6f,0.7f,0.4f);
 
 
 

@@ -20,11 +20,13 @@ public class TableComponent extends JPanel {
     public float sizeVar = 1f;
     public float animSize = 0.15f;
     public DataTypes.CardType[] cards = DataTypes.CardType.values();
+    public float lastUpdate = 0;
     public float angle;
     public int playerNum;
     boolean[] cardShown;
     boolean notDealt = true;
     boolean notShown = true;
+    int boardDealt = 0;
     public DataTypes.CardType[] communityCards = new DataTypes.CardType[5];
     public ArrayList<PlayerInfo> players = new ArrayList<>();
     public ArrayList<AnimInfo> animList = new ArrayList<>();
@@ -61,10 +63,14 @@ public class TableComponent extends JPanel {
 
 //loop
     public void paintComponent(Graphics g){
+        super.paintComponent(g);
         checkPlayers(players, Main.game.players);
         checkBoard();
-        super.paintComponent(g);
+        checkCash();
+        drawTurn(g);
         drawTable(g);
+        drawPot(g);
+        drawBet(g);
         drawPlayers(g);
         drawBoard(g, communityCards, sizeVar);
         drawAnim(animList, g);
@@ -91,14 +97,14 @@ public class TableComponent extends JPanel {
         float eSize = (float) (size*(0.75-players.size()*0.02));
         if (isYou) {
             //cards
-            drawCard((int) (x-cardW*size/2), y, g, card0, cardFront, size,isShown);
-            drawCard((int) (x+cardW*size/2), y, g, card1, cardFront, size, isShown);
+            drawCard((int) (x-cardW*size/2), (int) (y-size*35), g, card0, cardFront, size,isShown);
+            drawCard((int) (x+cardW*size/2), (int) (y-size*35), g, card1, cardFront, size, isShown);
         }else {
             //cards
             drawCard((int) (x-cardW*eSize/2), y, g, card0, cardFront, eSize, isShown);
             drawCard((int) (x+cardW*eSize/2), y, g, card1, cardFront, eSize,isShown);
             //cash + cash icon
-            Font font = new Font("Verdana", Font.BOLD, (int) (12*eSize*5.5));
+            Font font = new Font("Verdana", Font.BOLD, (int) (66*eSize));
             g.setFont(font);
             //cash
             g.drawString(cash+"",(int) (x-cardW*eSize+70*eSize), (int) (y+cardH*eSize/2+55*eSize));
@@ -112,8 +118,46 @@ public class TableComponent extends JPanel {
         int x = (int) (getWidth()/2+size*2.5*cardW);
         drawCard(x, getHeight()/2, g, DataTypes.CardType.S1, cardBack, size, false);
         for (int i = 0; i < 5; i++) {
-            drawCard((int) (x-(i+1)*cardW*size), getHeight()/2, g, comCards[i], cardFront, size, true);
+            drawCard((int) (x-5*cardW*size+i*cardW*size), getHeight()/2, g, comCards[i], cardFront, size, true);
         }
+    }
+    public void drawPot(Graphics g){
+        float size = sizeVar*getHeight()/2000;
+        Font font = new Font("Verdana", Font.BOLD, (int) (66*size));
+        g.setFont(font);
+        String pot = "Current pot:"+Main.game.pot;
+        g.drawString(pot, (int) (getWidth()/2-size*20*pot.length()), (int) ((getHeight()/2)*1.25));
+    }
+    public void drawBet(Graphics g){
+        float size = sizeVar*getHeight()/2000;
+        float eSize = (float) (size*(0.75-players.size()*0.02));
+        Font font = new Font("Verdana", Font.BOLD, (int) (66*eSize));
+        g.setFont(font);
+        for (int i = 1; i < players.size(); i++) {
+            int localTurn = i+Main.game.placeAtTable;
+            if (localTurn > players.size()-1) {
+                localTurn -= players.size();
+            }
+            String bet = "Bet:"+Main.game.players.get(i).bet;
+            g.drawString(bet, (int) (getPosX(localTurn,-2)-cardW*eSize), (int) (getPosY(localTurn,-2)+cardH/2*eSize+130*eSize));
+        }
+    }
+    public void drawTurn(Graphics g){
+        int localTurn = Main.game.turn+Main.game.placeAtTable;
+        if (localTurn > players.size()-1) {
+            localTurn -= players.size();
+        }
+        float size = sizeVar*getHeight()/2000;
+        float eSize = (float) (size*(0.75-players.size()*0.02));
+
+        if (localTurn == 0) {
+            g.drawRoundRect((int) (getPosX(localTurn,0)-size*cardW), (int) (getPosY(localTurn,0)+size*cardH),(int) (size*cardW),(int) (size*cardH),20*getHeight()/450,20*getHeight()/450);
+        }else {
+            g.drawRoundRect(getPosX(localTurn,0),getPosY(localTurn,0),getPosX(localTurn,1),getPosY(localTurn,1),20*getHeight()/450,20*getHeight()/450);
+        }
+    }
+    public void drawHighlight(Graphics g, int playerNum){
+
     }
     public void drawCard(int x, int y, Graphics g, DataTypes.CardType card, Image cardImage, float cardSize, boolean isShown){
         drawCard(x, y, g, card, cardImage, cardSize,isShown, 1, 1);
@@ -185,19 +229,18 @@ public class TableComponent extends JPanel {
                     setImage = cardBack;
                     isShown = false;
                 }
-                System.out.println("prog"+progress+"progF"+progressFlip+"progS"+progressSize);
                 drawCard((int) (startX+(endX-startX)*progress), (int) (startY+(endY-startY)*progress), g, animList.get(i).card, setImage, (float) (progressSize*getHeight()/450), isShown, (float) progressFlip);
             }
         }
     }
     public void drawTable(Graphics g){
-        int tableW = (int) (getWidth()*0.6);
-        int tableH = (int) (getHeight()*0.6);
-        g.setColor(Color.getHSBColor(0.1f, 1, 0.6f));
+        int tableW = (int) (getWidth()*0.5);
+        int tableH = (int) (getHeight()*0.5);
+        g.setColor(Color.getHSBColor(0.3f, 1, 0.5f));
         g.fillOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
         Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(10));
-        g2.setColor(Color.getHSBColor(0.5f, 1, 0.6f));
+        g2.setStroke(new BasicStroke(getHeight()/100f));
+        g2.setColor(Color.getHSBColor(0f, 0, 0f));
         g2.drawOval((getWidth()-tableW)/2, (getHeight()-tableH)/2, tableW, tableH);
         g.setColor(Color.getHSBColor(0,1,0));
     }
@@ -226,6 +269,10 @@ public class TableComponent extends JPanel {
             }
             giveCard(-1, 0, 0, 1, true,numOfPlayers*delay*2, cards[Main.game.card1]);
             notDealt = false;
+        }else if (numOfPlayers > 1 && Main.game.card0 == 52 && Main.game.card1 == 52 && !notDealt) {
+            for (int i = 0; i < players.size(); i++) {
+
+            }
         }
         if (Main.game.showEnemyCards && notShown) {
             for (int i = 1; i < numOfPlayers; i++) {
@@ -237,26 +284,46 @@ public class TableComponent extends JPanel {
 
     }
     public void checkBoard(){
-        if (communityCards[0] != cards[Main.game.communityCards[0]]) {
+        if (Main.game.communityCards[0] != 52 && boardDealt < 1) {
             giveCard(-1,-1,0,1,true,0,cards[Main.game.communityCards[0]]);
+            giveCard(-1,-1,0,2,true,100,cards[Main.game.communityCards[1]]);
+            giveCard(-1,-1,0,3,true,200,cards[Main.game.communityCards[2]]);
+            boardDealt = 1;
         }
-        if (communityCards[1] != cards[Main.game.communityCards[1]]) {
-            giveCard(-1,-1,0,2,true,0,cards[Main.game.communityCards[1]]);
-        }
-        if (communityCards[2] != cards[Main.game.communityCards[2]]) {
-            giveCard(-1,-1,0,3,true,0,cards[Main.game.communityCards[2]]);
-        }
-        if (communityCards[3] != cards[Main.game.communityCards[3]]) {
+
+        if (Main.game.communityCards[3] != 52 && boardDealt < 2) {
             giveCard(-1,-1,0,4,true,0,cards[Main.game.communityCards[3]]);
+            boardDealt = 2;
         }
-        if (communityCards[4] != cards[Main.game.communityCards[4]]) {
+        if (Main.game.communityCards[4] != 52 && boardDealt < 3) {
             giveCard(-1,-1,0,5,true,0,cards[Main.game.communityCards[4]]);
+            boardDealt = 3;
         }
+    }
+    public void checkCash(){
+        int numOfPlayers = Main.game.peopleAtTable;
+            for (int i = 0; i < numOfPlayers; i++) {
+                int localTurn = i+Main.game.placeAtTable;
+                if (localTurn > players.size()-1) {
+                    localTurn -= players.size();
+                }
+                if (players.size() == numOfPlayers) {
+                    players.get(localTurn).setCash(Main.game.players.get(localTurn).getCash());
+                }
+
+
+            }
+
+
     }
     public int getPosX(int entityId, int cardId){
         if (entityId < 0) {
-            float size = sizeVar*getHeight()/3000;
-            return (int) (getWidth()/2+size*(2.5-cardId)*cardW);
+            if (cardId == 0) {
+                return (int) (getWidth()/2+sizeVar*getHeight()/3000*2.5*cardW);
+            }else {
+                float size = sizeVar * getHeight() / 3000;
+                return (int) (getWidth() / 2 - size * (-1.5+(5-cardId)) * cardW);
+            }
         }else {
 
             float size = sizeVar*getHeight()/2000;
@@ -265,6 +332,8 @@ public class TableComponent extends JPanel {
 
             if (cardId == -1) {
                 return (int) (-Math.sin(angle*entityId)*getWidth()/2*radius*0.7+getWidth()/2);
+            }else if(cardId == -2){
+                return (int) (-Math.sin(angle*entityId)*getWidth()/2*radius+getWidth()/2);
             }else {
                 int offset;
                 if (entityId == 0) {
@@ -284,9 +353,16 @@ public class TableComponent extends JPanel {
             float angle = (float) (Math.PI*2/(players.size()));
             if (cardId == -1) {
                 return (int) (Math.cos(angle*entityId)*getHeight()/2*radius*0.7+getHeight()/2);
+            }else if(cardId == -2){
+                    return (int) (Math.cos(angle * entityId) * getHeight() / 2 * radius + getHeight() / 2);
             }
-            return (int) (Math.cos(angle*entityId)*getHeight()/2*radius+getHeight()/2);
+            if (entityId == 0) {
+                return (int) (Math.cos(angle*entityId)*getHeight()/2*radius+getHeight()/2-sizeVar*getHeight()/60);
+            }else {
+                return (int) (Math.cos(angle * entityId) * getHeight() / 2 * radius + getHeight() / 2);
+            }
         }
+
     }
     public void giveCard(int startEntityId, int endEntityId, int startCardId, int endCardId, boolean isShown, int delay, DataTypes.CardType cardType){
         float endSize = animSize;
