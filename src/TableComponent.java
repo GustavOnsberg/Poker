@@ -237,7 +237,6 @@ public class TableComponent extends JPanel {
 
     }
     public void checkBoard(){
-        System.out.println(Main.game.communityCards[0]);
         if (Main.game.communityCards[0] != 52) {
             giveCard(-1,-1,0,1,true,0,cards[Main.game.communityCards[0]]);
         }
